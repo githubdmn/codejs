@@ -1,32 +1,38 @@
 {
-  "name": "jscode",
-  "version": "1.0.0",
-  "description": "JavaScript code snippets",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx nodemon",
-    "start": "npm run dev",
-    "prettier": "npx prettier --config .prettierrc 'src/**/**/*.js' --write",
-    "lint": "npx eslint src/"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/githubdmn/jscode.git"
-  },
-  "keywords": [
-    "JavaScript",
-    "nodejs"
-  ],
-  "author": "Damjan Ivanovic",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/githubdmn/jscode/issues"
-  },
-  "homepage": "https://github.com/githubdmn/jscode#readme",
-  "devDependencies": {
-    "eslint": "^8.25.0",
-    "nodemon": "^2.0.20",
-    "prettier": "^2.7.1"
-  }
+	"name": "jscode",
+	"version": "1.0.0",
+	"description": "JavaScript code snippets",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "npx nodemon",
+		"devjs": "npx nodemon --config nodemon-js.json",
+		"start": "npm run dev",
+		"prettier": "npx prettier --config .prettierrc 'src/**/**/*.js' --write",
+		"build": "npx tsc",
+		"lint": "npx eslint src/"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/githubdmn/jscode.git"
+	},
+	"keywords": [
+		"JavaScript",
+		"nodejs"
+	],
+	"author": "Damjan Ivanovic",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/githubdmn/jscode/issues"
+	},
+	"homepage": "https://github.com/githubdmn/jscode#readme",
+	"devDependencies": {
+		"@types/node": "^22.15.2",
+		"eslint": "^8.57.1",
+		"nodemon": "^3.1.10",
+		"prettier": "^2.7.1",
+		"ts-node": "^10.9.2",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.8.3"
+	}
 }
