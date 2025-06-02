@@ -3,7 +3,7 @@
 	"ext": ".ts,.js",
 	"ignore": [],
 	"exec": "ts-node -r tsconfig-paths/register ./src/ts",
-	"events": {
+	"_events": {
 		"restart": "npx prettier --write src/**/*.{js,ts} && echo 'Prettier applied'"
 	}
 }

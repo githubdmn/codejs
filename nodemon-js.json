@@ -2,5 +2,8 @@
 	"watch": ["src/js"],
 	"ext": ".js",
 	"ignore": [],
-	"exec": "node src/js"
+	"exec": "node src/js",
+	"_events": {
+		"restart": "npx prettier --write src/**/*.{js,ts} && echo 'Prettier applied'"
+	}
 }
