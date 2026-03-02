@@ -35,6 +35,7 @@
 ### 1.2 Key Components Explained
 
 **V8 JavaScript Engine:**
+
 - Open-source JavaScript engine written in C++
 - Developed by Google for Chrome
 - Compiles JavaScript to native machine code
@@ -42,6 +43,7 @@
 - Provides the JavaScript runtime environment
 
 **libuv:**
+
 - Cross-platform C library for asynchronous I/O
 - Provides the event loop
 - Handles file system operations, networking, timers
@@ -49,6 +51,7 @@
 - Works on Windows, macOS, Linux
 
 **Node.js Bindings:**
+
 - C++ layer that bridges JavaScript and C++
 - Exposes libuv and other C++ APIs to JavaScript
 - Implements Node.js core modules (fs, http, crypto, etc.)
@@ -100,17 +103,17 @@ Return                     // Return result
 
 // Performance example:
 function hotFunction(x) {
-    return x * 2;
+	return x * 2;
 }
 
 // First few calls: Interpreted by Ignition
 for (let i = 0; i < 10; i++) {
-    hotFunction(i);
+	hotFunction(i);
 }
 
 // After many calls: TurboFan optimizes it
 for (let i = 0; i < 100000; i++) {
-    hotFunction(i);  // Now runs as native machine code
+	hotFunction(i);  // Now runs as native machine code
 }
 
 // 4. DEOPTIMIZATION
@@ -118,12 +121,12 @@ for (let i = 0; i < 100000; i++) {
 // If assumptions break, V8 deoptimizes back to bytecode
 
 function maybeOptimize(x) {
-    return x + 1;
+	return x + 1;
 }
 
 // V8 assumes x is always a number
 for (let i = 0; i < 100000; i++) {
-    maybeOptimize(i);  // Optimized for numbers
+	maybeOptimize(i);  // Optimized for numbers
 }
 
 // Breaking the assumption
@@ -172,12 +175,12 @@ maybeOptimize("string");  // DEOPTIMIZATION! Falls back to interpreter
 // SCAVENGE (Minor GC) - Fast, frequent
 // ────────────────────────────────────
 function createShortLived() {
-    const temp = { data: 'temporary' };  // Allocated in New Space
-    return temp.data;
+	const temp = { data: 'temporary' };  // Allocated in New Space
+	return temp.data;
 }
 
 for (let i = 0; i < 1000; i++) {
-    createShortLived();  // Objects quickly garbage collected
+	createShortLived();  // Objects quickly garbage collected
 }
 
 // MARK-SWEEP-COMPACT (Major GC) - Slower, less frequent
@@ -185,48 +188,49 @@ for (let i = 0; i < 1000; i++) {
 const globalCache = [];  // Lives in Old Space
 
 function createLongLived() {
-    const obj = { id: Date.now(), data: new Array(1000) };
-    globalCache.push(obj);  // Promoted to Old Space
+	const obj = { id: Date.now(), data: new Array(1000) };
+	globalCache.push(obj);  // Promoted to Old Space
 }
 
 // Memory leak example (avoid this!)
 const leakyCache = {};
+
 function memorLeak(id) {
-    leakyCache[id] = new Array(10000000);  // Never removed = memory leak
+	leakyCache[id] = new Array(10000000);  // Never removed = memory leak
 }
 
 // Proper cache with cleanup
 class LRUCache {
-    constructor(maxSize) {
-        this.maxSize = maxSize;
-        this.cache = new Map();
-    }
-    
-    set(key, value) {
-        if (this.cache.size >= this.maxSize) {
-            const firstKey = this.cache.keys().next().value;
-            this.cache.delete(firstKey);  // Remove oldest
-        }
-        this.cache.set(key, value);
-    }
+	constructor(maxSize) {
+		this.maxSize = maxSize;
+		this.cache = new Map();
+	}
+
+	set(key, value) {
+		if (this.cache.size >= this.maxSize) {
+			const firstKey = this.cache.keys().next().value;
+			this.cache.delete(firstKey);  // Remove oldest
+		}
+		this.cache.set(key, value);
+	}
 }
 
 // Monitor memory usage
 setInterval(() => {
-    const usage = process.memoryUsage();
-    console.log({
-        rss: `${Math.round(usage.rss / 1024 / 1024)} MB`,       // Total memory
-        heapTotal: `${Math.round(usage.heapTotal / 1024 / 1024)} MB`,
-        heapUsed: `${Math.round(usage.heapUsed / 1024 / 1024)} MB`,
-        external: `${Math.round(usage.external / 1024 / 1024)} MB`
-    });
+	const usage = process.memoryUsage();
+	console.log({
+		rss: `${Math.round(usage.rss / 1024 / 1024)} MB`,       // Total memory
+		heapTotal: `${Math.round(usage.heapTotal / 1024 / 1024)} MB`,
+		heapUsed: `${Math.round(usage.heapUsed / 1024 / 1024)} MB`,
+		external: `${Math.round(usage.external / 1024 / 1024)} MB`
+	});
 }, 5000);
 
 // Force garbage collection (requires --expose-gc flag)
 // node --expose-gc app.js
 if (global.gc) {
-    global.gc();
-    console.log('Garbage collection triggered');
+	global.gc();
+	console.log('Garbage collection triggered');
 }
 ```
 
@@ -238,28 +242,28 @@ if (global.gc) {
 
 // ✅ GOOD: Consistent object shape
 class Point {
-    constructor(x, y) {
-        this.x = x;  // Hidden class with properties: x
-        this.y = y;  // Hidden class with properties: x, y
-    }
+	constructor(x, y) {
+		this.x = x;  // Hidden class with properties: x
+		this.y = y;  // Hidden class with properties: x, y
+	}
 }
 
 const points = [];
 for (let i = 0; i < 1000; i++) {
-    points.push(new Point(i, i * 2));  // All same hidden class!
+	points.push(new Point(i, i * 2));  // All same hidden class!
 }
 // V8 can optimize property access
 
 // ❌ BAD: Dynamic object shapes
 const dynamicPoints = [];
 for (let i = 0; i < 1000; i++) {
-    const point = {};
-    point.x = i;
-    if (i % 2 === 0) {
-        point.y = i * 2;     // Different shape!
-        point.z = i * 3;     // Another different shape!
-    }
-    dynamicPoints.push(point);
+	const point = {};
+	point.x = i;
+	if (i % 2 === 0) {
+		point.y = i * 2;     // Different shape!
+		point.z = i * 3;     // Another different shape!
+	}
+	dynamicPoints.push(point);
 }
 // V8 cannot optimize - different hidden classes
 
@@ -267,7 +271,7 @@ for (let i = 0; i < 1000; i++) {
 // ──────────────
 
 function getX(obj) {
-    return obj.x;  // V8 caches the property location
+	return obj.x;  // V8 caches the property location
 }
 
 const p1 = new Point(1, 2);
@@ -281,7 +285,7 @@ getX(p2);  // Cache hit! Fast access
 
 // MONOMORPHIC (BEST) - One type
 function processPoint(point) {
-    return point.x + point.y;
+	return point.x + point.y;
 }
 
 const points1 = [new Point(1, 2), new Point(3, 4)];
@@ -289,11 +293,11 @@ points1.forEach(p => processPoint(p));  // Always Point type
 
 // POLYMORPHIC (OK) - Few types (2-4)
 class Point3D {
-    constructor(x, y, z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
+	constructor(x, y, z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
 }
 
 const mixed = [new Point(1, 2), new Point3D(3, 4, 5)];
@@ -301,11 +305,11 @@ mixed.forEach(p => processPoint(p));  // Two types, still optimizable
 
 // MEGAMORPHIC (BAD) - Many types (5+)
 const veryMixed = [
-    new Point(1, 2),
-    new Point3D(3, 4, 5),
-    {x: 1, y: 2},
-    {x: 1, y: 2, z: 3},
-    {x: 1, y: 2, extra: true}
+	new Point(1, 2),
+	new Point3D(3, 4, 5),
+	{ x: 1, y: 2 },
+	{ x: 1, y: 2, z: 3 },
+	{ x: 1, y: 2, extra: true }
 ];
 veryMixed.forEach(p => processPoint(p));  // Too many types, can't optimize
 
@@ -334,24 +338,24 @@ sparse[1000] = 4;                 // Creates holes, becomes HOLEY
 
 // Small functions get inlined
 function square(x) {
-    return x * x;
+	return x * x;
 }
 
 function sumOfSquares(arr) {
-    let sum = 0;
-    for (let i = 0; i < arr.length; i++) {
-        sum += square(arr[i]);  // square() gets inlined here
-    }
-    return sum;
+	let sum = 0;
+	for (let i = 0; i < arr.length; i++) {
+		sum += square(arr[i]);  // square() gets inlined here
+	}
+	return sum;
 }
 
 // After optimization, effectively becomes:
 function sumOfSquaresOptimized(arr) {
-    let sum = 0;
-    for (let i = 0; i < arr.length; i++) {
-        sum += arr[i] * arr[i];  // Inlined!
-    }
-    return sum;
+	let sum = 0;
+	for (let i = 0; i < arr.length; i++) {
+		sum += arr[i] * arr[i];  // Inlined!
+	}
+	return sum;
 }
 ```
 
@@ -363,96 +367,97 @@ function sumOfSquaresOptimized(arr) {
 // 1. Initialize all object properties in constructor
 // ───────────────────────────────────────────────────
 class User {
-    constructor(name, email) {
-        this.name = name;
-        this.email = email;
-        this.age = null;      // Initialize even if null
-        this.address = null;  // Better than adding later
-    }
+	constructor(name, email) {
+		this.name = name;
+		this.email = email;
+		this.age = null;      // Initialize even if null
+		this.address = null;  // Better than adding later
+	}
 }
 
 // 2. Avoid changing object shape after creation
 // ──────────────────────────────────────────────
 // ❌ BAD
-const user = {name: 'John'};
+const user = { name: 'John' };
 user.email = 'john@example.com';  // Shape change
 delete user.name;                 // Shape change (very bad!)
 
 // ✅ GOOD
 const user2 = {
-    name: 'John',
-    email: 'john@example.com'
+	name: 'John',
+	email: 'john@example.com'
 };
 
 // 3. Use consistent types
 // ───────────────────────
 // ❌ BAD
 function add(a, b) {
-    return a + b;
+	return a + b;
 }
+
 add(1, 2);        // Works with numbers
 add('1', '2');    // Works with strings - type confusion!
 
 // ✅ GOOD
 function addNumbers(a, b) {
-    // Type check or use TypeScript
-    if (typeof a !== 'number' || typeof b !== 'number') {
-        throw new TypeError('Arguments must be numbers');
-    }
-    return a + b;
+	// Type check or use TypeScript
+	if (typeof a !== 'number' || typeof b !== 'number') {
+		throw new TypeError('Arguments must be numbers');
+	}
+	return a + b;
 }
 
 // 4. Avoid arguments object (use rest parameters)
 // ────────────────────────────────────────────────
 // ❌ BAD - arguments prevents optimization
 function oldWay() {
-    const args = Array.prototype.slice.call(arguments);
-    return args.reduce((a, b) => a + b, 0);
+	const args = Array.prototype.slice.call(arguments);
+	return args.reduce((a, b) => a + b, 0);
 }
 
 // ✅ GOOD - rest parameters are optimizable
 function newWay(...args) {
-    return args.reduce((a, b) => a + b, 0);
+	return args.reduce((a, b) => a + b, 0);
 }
 
 // 5. Avoid try-catch in hot functions
 // ────────────────────────────────────
 // ❌ BAD - try-catch prevents optimization
 function processWithTryCatch(data) {
-    try {
-        return data.map(x => x * 2);
-    } catch (e) {
-        return [];
-    }
+	try {
+		return data.map(x => x * 2);
+	} catch (e) {
+		return [];
+	}
 }
 
 // ✅ GOOD - Move try-catch outside hot path
 function process(data) {
-    return data.map(x => x * 2);
+	return data.map(x => x * 2);
 }
 
 function safeProcess(data) {
-    try {
-        return process(data);
-    } catch (e) {
-        return [];
-    }
+	try {
+		return process(data);
+	} catch (e) {
+		return [];
+	}
 }
 
 // 6. Keep functions small and focused
 // ────────────────────────────────────
 // ✅ GOOD - Small functions can be inlined
 function calculateTotal(items) {
-    return items.reduce((sum, item) => sum + item.price, 0);
+	return items.reduce((sum, item) => sum + item.price, 0);
 }
 
 function applyDiscount(total, discountPercent) {
-    return total * (1 - discountPercent / 100);
+	return total * (1 - discountPercent / 100);
 }
 
 function calculateFinalPrice(items, discountPercent) {
-    const total = calculateTotal(items);
-    return applyDiscount(total, discountPercent);
+	const total = calculateTotal(items);
+	return applyDiscount(total, discountPercent);
 }
 
 // 7. Use TypedArrays for numeric data
@@ -534,21 +539,21 @@ const crypto = require('crypto');
 
 // File operations use thread pool
 fs.readFile('file.txt', (err, data) => {
-    // Runs in thread pool, callback in event loop
-    console.log('File read complete');
+	// Runs in thread pool, callback in event loop
+	console.log('File read complete');
 });
 
 // Crypto operations use thread pool
 crypto.pbkdf2('password', 'salt', 100000, 512, 'sha512', (err, key) => {
-    // CPU-intensive work in thread pool
-    console.log('Hashing complete');
+	// CPU-intensive work in thread pool
+	console.log('Hashing complete');
 });
 
 // Network I/O does NOT use thread pool (uses OS async APIs)
 const http = require('http');
 http.get('http://example.com', (res) => {
-    // No thread pool involved - fully async at OS level
-    console.log('HTTP request complete');
+	// No thread pool involved - fully async at OS level
+	console.log('HTTP request complete');
 });
 ```
 
@@ -587,27 +592,27 @@ Microtasks (run between phases):
 console.log('1. Start');
 
 setTimeout(() => {
-    console.log('4. Timeout 0ms');
+	console.log('4. Timeout 0ms');
 }, 0);
 
 setTimeout(() => {
-    console.log('5. Timeout 100ms');
+	console.log('5. Timeout 100ms');
 }, 100);
 
 // PHASE 5: CHECK
 // ──────────────
 setImmediate(() => {
-    console.log('6. Immediate');
+	console.log('6. Immediate');
 });
 
 // MICROTASKS (run after current operation, before next phase)
 // ────────────────────────────────────────────────────────────
 process.nextTick(() => {
-    console.log('2. Next Tick');
+	console.log('2. Next Tick');
 });
 
 Promise.resolve().then(() => {
-    console.log('3. Promise');
+	console.log('3. Promise');
 });
 
 console.log('7. End');
@@ -630,7 +635,7 @@ Output order:
 const start = Date.now();
 
 setTimeout(() => {
-    console.log(`Timer executed after ${Date.now() - start}ms`);
+	console.log(`Timer executed after ${Date.now() - start}ms`);
 }, 10);
 
 // Timers execute callbacks whose time has elapsed
@@ -641,14 +646,14 @@ setTimeout(() => {
 const net = require('net');
 
 const server = net.createServer((socket) => {
-    socket.on('data', (data) => {
-        // Runs in poll phase
-        console.log('Data received:', data.toString());
-    });
+	socket.on('data', (data) => {
+		// Runs in poll phase
+		console.log('Data received:', data.toString());
+	});
 });
 
 server.listen(8000, () => {
-    console.log('Server listening');
+	console.log('Server listening');
 });
 
 // Poll phase:
@@ -659,11 +664,11 @@ server.listen(8000, () => {
 // CHECK PHASE
 // ───────────
 setImmediate(() => {
-    console.log('Immediate 1');
-    
-    setImmediate(() => {
-        console.log('Immediate 2 (nested)');
-    });
+	console.log('Immediate 1');
+
+	setImmediate(() => {
+		console.log('Immediate 2 (nested)');
+	});
 });
 
 // setImmediate always runs after poll phase
@@ -673,7 +678,7 @@ setImmediate(() => {
 // ─────────────────────
 const server2 = net.createServer();
 server2.on('close', () => {
-    console.log('Server closed');  // Runs in close callbacks phase
+	console.log('Server closed');  // Runs in close callbacks phase
 });
 ```
 
@@ -684,11 +689,11 @@ server2.on('close', () => {
 // ─────────────────────────────────────
 
 setTimeout(() => {
-    console.log('timeout');
+	console.log('timeout');
 }, 0);
 
 setImmediate(() => {
-    console.log('immediate');
+	console.log('immediate');
 });
 
 // Output is non-deterministic when called at top level:
@@ -700,13 +705,13 @@ setImmediate(() => {
 const fs = require('fs');
 
 fs.readFile(__filename, () => {
-    setTimeout(() => {
-        console.log('timeout');
-    }, 0);
-    
-    setImmediate(() => {
-        console.log('immediate');
-    });
+	setTimeout(() => {
+		console.log('timeout');
+	}, 0);
+
+	setImmediate(() => {
+		console.log('immediate');
+	});
 });
 
 // Always outputs:
@@ -722,17 +727,17 @@ setTimeout(() => console.log('1. timeout'), 0);
 setImmediate(() => console.log('2. immediate'));
 
 process.nextTick(() => {
-    console.log('3. nextTick 1');
-    
-    process.nextTick(() => {
-        console.log('4. nextTick 2 (nested)');
-    });
+	console.log('3. nextTick 1');
+
+	process.nextTick(() => {
+		console.log('4. nextTick 2 (nested)');
+	});
 });
 
 Promise.resolve().then(() => {
-    console.log('5. promise 1');
+	console.log('5. promise 1');
 }).then(() => {
-    console.log('6. promise 2');
+	console.log('6. promise 2');
 });
 
 // Output:
@@ -762,7 +767,7 @@ console.log('After blocking');
 console.log('Before async operation');
 
 crypto.pbkdf2('password', 'salt', 100000, 512, 'sha512', (err, key) => {
-    console.log('Hash computed asynchronously');
+	console.log('Hash computed asynchronously');
 });
 
 setTimeout(() => console.log('Timer not delayed'), 0);
@@ -776,45 +781,45 @@ console.log('After async operation starts');
 let counter = 0;
 
 function recursiveNextTick() {
-    if (counter < 10000) {
-        counter++;
-        process.nextTick(recursiveNextTick);
-    }
+	if (counter < 10000) {
+		counter++;
+		process.nextTick(recursiveNextTick);
+	}
 }
 
 process.nextTick(recursiveNextTick);
 
 // Timer will never run until nextTick queue is empty
 setTimeout(() => {
-    console.log('This is starved for a while');
+	console.log('This is starved for a while');
 }, 0);
 
 // ✅ BETTER: Use setImmediate to avoid starvation
 let counter2 = 0;
 
 function recursiveImmediate() {
-    if (counter2 < 10000) {
-        counter2++;
-        setImmediate(recursiveImmediate);  // Allows other events
-    }
+	if (counter2 < 10000) {
+		counter2++;
+		setImmediate(recursiveImmediate);  // Allows other events
+	}
 }
 
 setImmediate(recursiveImmediate);
 
 setTimeout(() => {
-    console.log('This runs between immediates');
+	console.log('This runs between immediates');
 }, 0);
 
 // Example 5: Understanding Event Loop Lag
 // ────────────────────────────────────────
 
 function measureEventLoopLag() {
-    const start = Date.now();
-    
-    setImmediate(() => {
-        const lag = Date.now() - start;
-        console.log(`Event loop lag: ${lag}ms`);
-    });
+	const start = Date.now();
+
+	setImmediate(() => {
+		const lag = Date.now() - start;
+		console.log(`Event loop lag: ${lag}ms`);
+	});
 }
 
 // Measure lag every second
@@ -822,15 +827,15 @@ setInterval(measureEventLoopLag, 1000);
 
 // Simulate blocking work
 function simulateWork(duration) {
-    const start = Date.now();
-    while (Date.now() - start < duration) {
-        // Blocking CPU work
-    }
+	const start = Date.now();
+	while (Date.now() - start < duration) {
+		// Blocking CPU work
+	}
 }
 
 // Every 5 seconds, block for 200ms
 setInterval(() => {
-    simulateWork(200);
+	simulateWork(200);
 }, 5000);
 
 // When blocking occurs, lag will spike to ~200ms
@@ -848,9 +853,9 @@ const fs = require('fs');
 const start = Date.now();
 
 for (let i = 0; i < 5; i++) {
-    crypto.pbkdf2('password', 'salt', 100000, 512, 'sha512', (err, key) => {
-        console.log(`${i + 1}: ${Date.now() - start}ms`);
-    });
+	crypto.pbkdf2('password', 'salt', 100000, 512, 'sha512', (err, key) => {
+		console.log(`${i + 1}: ${Date.now() - start}ms`);
+	});
 }
 
 /*
@@ -879,12 +884,12 @@ fs.readFile('file5.txt', () => console.log('File 5'));  // Waits for thread
 // DNS lookups use thread pool
 const dns = require('dns');
 dns.lookup('google.com', (err, address) => {
-    console.log('Google IP:', address);
+	console.log('Google IP:', address);
 });
 
 // But dns.resolve uses native async (no thread pool)
 dns.resolve4('google.com', (err, addresses) => {
-    console.log('Google IPs:', addresses);
+	console.log('Google IPs:', addresses);
 });
 ```
 
@@ -918,15 +923,15 @@ console.log('This runs in the main thread');
 
 // Even though async, callback still runs in main thread
 setTimeout(() => {
-    console.log('This callback also runs in main thread');
+	console.log('This callback also runs in main thread');
 }, 1000);
 
 // Blocking the main thread affects everything
 function blockFor(ms) {
-    const start = Date.now();
-    while (Date.now() - start < ms) {
-        // Blocking!
-    }
+	const start = Date.now();
+	while (Date.now() - start < ms) {
+		// Blocking!
+	}
 }
 
 setTimeout(() => console.log('Timer 1'), 1000);
@@ -940,18 +945,18 @@ blockFor(2000);  // Blocks EVERYTHING for 2 seconds
 const http = require('http');
 
 const server = http.createServer((req, res) => {
-    if (req.url === '/fast') {
-        res.end('Fast response');
-    } else if (req.url === '/slow') {
-        // ❌ BAD: Blocking operation
-        const result = fibonacci(40);  // Takes ~1 second
-        res.end(`Result: ${result}`);
-    }
+	if (req.url === '/fast') {
+		res.end('Fast response');
+	} else if (req.url === '/slow') {
+		// ❌ BAD: Blocking operation
+		const result = fibonacci(40);  // Takes ~1 second
+		res.end(`Result: ${result}`);
+	}
 });
 
 function fibonacci(n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
+	if (n <= 1) return n;
+	return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
 server.listen(3000);
@@ -968,141 +973,141 @@ server.listen(3000);
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 
 if (isMainThread) {
-    // MAIN THREAD
-    console.log('Main thread started');
-    
-    // Create worker
-    const worker = new Worker(__filename, {
-        workerData: { num: 40 }
-    });
-    
-    // Receive messages from worker
-    worker.on('message', (result) => {
-        console.log('Result from worker:', result);
-    });
-    
-    worker.on('error', (error) => {
-        console.error('Worker error:', error);
-    });
-    
-    worker.on('exit', (code) => {
-        if (code !== 0) {
-            console.error(`Worker stopped with exit code ${code}`);
-        }
-    });
-    
-    console.log('Main thread continues executing...');
-    
+	// MAIN THREAD
+	console.log('Main thread started');
+
+	// Create worker
+	const worker = new Worker(__filename, {
+		workerData: { num: 40 }
+	});
+
+	// Receive messages from worker
+	worker.on('message', (result) => {
+		console.log('Result from worker:', result);
+	});
+
+	worker.on('error', (error) => {
+		console.error('Worker error:', error);
+	});
+
+	worker.on('exit', (code) => {
+		if (code !== 0) {
+			console.error(`Worker stopped with exit code ${code}`);
+		}
+	});
+
+	console.log('Main thread continues executing...');
+
 } else {
-    // WORKER THREAD
-    console.log('Worker thread started');
-    
-    function fibonacci(n) {
-        if (n <= 1) return n;
-        return fibonacci(n - 1) + fibonacci(n - 2);
-    }
-    
-    const result = fibonacci(workerData.num);
-    
-    // Send result back to main thread
-    parentPort.postMessage(result);
+	// WORKER THREAD
+	console.log('Worker thread started');
+
+	function fibonacci(n) {
+		if (n <= 1) return n;
+		return fibonacci(n - 1) + fibonacci(n - 2);
+	}
+
+	const result = fibonacci(workerData.num);
+
+	// Send result back to main thread
+	parentPort.postMessage(result);
 }
 
 // Practical example: Parallel processing
 const { Worker } = require('worker_threads');
 
 function runWorker(workerData) {
-    return new Promise((resolve, reject) => {
-        const worker = new Worker('./worker.js', { workerData });
-        worker.on('message', resolve);
-        worker.on('error', reject);
-        worker.on('exit', (code) => {
-            if (code !== 0) {
-                reject(new Error(`Worker exited with code ${code}`));
-            }
-        });
-    });
+	return new Promise((resolve, reject) => {
+		const worker = new Worker('./worker.js', { workerData });
+		worker.on('message', resolve);
+		worker.on('error', reject);
+		worker.on('exit', (code) => {
+			if (code !== 0) {
+				reject(new Error(`Worker exited with code ${code}`));
+			}
+		});
+	});
 }
 
 async function parallelProcessing() {
-    const tasks = [10, 20, 30, 40];
-    
-    const results = await Promise.all(
-        tasks.map(task => runWorker({ num: task }))
-    );
-    
-    console.log('All results:', results);
+	const tasks = [10, 20, 30, 40];
+
+	const results = await Promise.all(
+		tasks.map(task => runWorker({ num: task }))
+	);
+
+	console.log('All results:', results);
 }
 
 // Worker pool pattern
 class WorkerPool {
-    constructor(workerPath, poolSize) {
-        this.workerPath = workerPath;
-        this.pool = [];
-        this.queue = [];
-        
-        for (let i = 0; i < poolSize; i++) {
-            this.pool.push(this.createWorker());
-        }
-    }
-    
-    createWorker() {
-        const worker = new Worker(this.workerPath);
-        worker.busy = false;
-        return worker;
-    }
-    
-    async exec(workerData) {
-        const worker = this.getAvailableWorker();
-        
-        if (!worker) {
-            return new Promise((resolve) => {
-                this.queue.push({ workerData, resolve });
-            });
-        }
-        
-        return this.runTask(worker, workerData);
-    }
-    
-    getAvailableWorker() {
-        return this.pool.find(w => !w.busy);
-    }
-    
-    async runTask(worker, workerData) {
-        worker.busy = true;
-        
-        return new Promise((resolve, reject) => {
-            worker.once('message', (result) => {
-                worker.busy = false;
-                resolve(result);
-                this.processQueue();
-            });
-            
-            worker.once('error', reject);
-            worker.postMessage(workerData);
-        });
-    }
-    
-    processQueue() {
-        if (this.queue.length === 0) return;
-        
-        const worker = this.getAvailableWorker();
-        if (!worker) return;
-        
-        const { workerData, resolve } = this.queue.shift();
-        this.runTask(worker, workerData).then(resolve);
-    }
+	constructor(workerPath, poolSize) {
+		this.workerPath = workerPath;
+		this.pool = [];
+		this.queue = [];
+
+		for (let i = 0; i < poolSize; i++) {
+			this.pool.push(this.createWorker());
+		}
+	}
+
+	createWorker() {
+		const worker = new Worker(this.workerPath);
+		worker.busy = false;
+		return worker;
+	}
+
+	async exec(workerData) {
+		const worker = this.getAvailableWorker();
+
+		if (!worker) {
+			return new Promise((resolve) => {
+				this.queue.push({ workerData, resolve });
+			});
+		}
+
+		return this.runTask(worker, workerData);
+	}
+
+	getAvailableWorker() {
+		return this.pool.find(w => !w.busy);
+	}
+
+	async runTask(worker, workerData) {
+		worker.busy = true;
+
+		return new Promise((resolve, reject) => {
+			worker.once('message', (result) => {
+				worker.busy = false;
+				resolve(result);
+				this.processQueue();
+			});
+
+			worker.once('error', reject);
+			worker.postMessage(workerData);
+		});
+	}
+
+	processQueue() {
+		if (this.queue.length === 0) return;
+
+		const worker = this.getAvailableWorker();
+		if (!worker) return;
+
+		const { workerData, resolve } = this.queue.shift();
+		this.runTask(worker, workerData).then(resolve);
+	}
 }
 
 // Usage
 const pool = new WorkerPool('./worker.js', 4);
 
 async function processMany() {
-    const tasks = Array.from({ length: 100 }, (_, i) => i);
-    const results = await Promise.all(
-        tasks.map(task => pool.exec({ num: task }))
-    );
-    console.log('Processed 100 tasks:', results.length);
+	const tasks = Array.from({ length: 100 }, (_, i) => i);
+	const results = await Promise.all(
+		tasks.map(task => pool.exec({ num: task }))
+	);
+	console.log('Processed 100 tasks:', results.length);
 }
 ```
 
@@ -1118,43 +1123,43 @@ const ls = spawn('ls', ['-lh', '/usr']);
 
 // stdout is a stream
 ls.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
+	console.log(`stdout: ${data}`);
 });
 
 ls.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
+	console.error(`stderr: ${data}`);
 });
 
 ls.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
+	console.log(`child process exited with code ${code}`);
 });
 
 // 2. exec() - Buffer-based, best for small output
 // ────────────────────────────────────────────────
 
 exec('ls -lh /usr', (error, stdout, stderr) => {
-    if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-    }
-    console.log(`stdout: ${stdout}`);
-    console.error(`stderr: ${stderr}`);
+	if (error) {
+		console.error(`exec error: ${error}`);
+		return;
+	}
+	console.log(`stdout: ${stdout}`);
+	console.error(`stderr: ${stderr}`);
 });
 
 // With options
-exec('cat *.js | wc -l', { 
-    cwd: '/path/to/dir',
-    env: { NODE_ENV: 'production' },
-    maxBuffer: 1024 * 1024  // 1MB
+exec('cat *.js | wc -l', {
+	cwd: '/path/to/dir',
+	env: { NODE_ENV: 'production' },
+	maxBuffer: 1024 * 1024  // 1MB
 }, (error, stdout) => {
-    console.log(`Number of lines: ${stdout}`);
+	console.log(`Number of lines: ${stdout}`);
 });
 
 // 3. execFile() - Like exec but doesn't spawn shell
 // ──────────────────────────────────────────────────
 
 execFile('node', ['--version'], (error, stdout) => {
-    console.log(`Node version: ${stdout}`);
+	console.log(`Node version: ${stdout}`);
 });
 
 // 4. fork() - Spawn Node.js processes with IPC
@@ -1164,15 +1169,15 @@ execFile('node', ['--version'], (error, stdout) => {
 const child = fork('child.js');
 
 child.on('message', (msg) => {
-    console.log('Message from child:', msg);
+	console.log('Message from child:', msg);
 });
 
 child.send({ hello: 'world' });
 
 // child.js
 process.on('message', (msg) => {
-    console.log('Message from parent:', msg);
-    process.send({ received: true });
+	console.log('Message from parent:', msg);
+	process.send({ received: true });
 });
 
 // Practical example: CPU-intensive work in child process
@@ -1183,36 +1188,37 @@ const http = require('http');
 const { fork } = require('child_process');
 
 http.createServer((req, res) => {
-    if (req.url === '/compute') {
-        const child = fork('compute.js');
-        
-        child.send({ num: 40 });
-        
-        child.on('message', (result) => {
-            res.end(`Result: ${result}`);
-        });
-        
-    } else {
-        res.end('Hello World');
-    }
+	if (req.url === '/compute') {
+		const child = fork('compute.js');
+
+		child.send({ num: 40 });
+
+		child.on('message', (result) => {
+			res.end(`Result: ${result}`);
+		});
+
+	} else {
+		res.end('Hello World');
+	}
 }).listen(3000);
 
 // compute.js
 process.on('message', (msg) => {
-    const result = fibonacci(msg.num);
-    process.send(result);
-    process.exit();
+	const result = fibonacci(msg.num);
+	process.send(result);
+	process.exit();
 });
 
 function fibonacci(n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
+	if (n <= 1) return n;
+	return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
 // Now /compute doesn't block other requests!
 ```
 
 This covers the Node.js runtime in depth. Continue with:
+
 1. **Streams and Buffers** (detailed explanation)
 2. **Async patterns** (callbacks, promises, async/await)
 3. **Performance optimization**
