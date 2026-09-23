@@ -9,6 +9,7 @@ I'll create a comprehensive, structured learning path to master Node.js from fun
 ### 1.1 Understanding Node.js Runtime
 
 **What is Node.js?**
+
 ```javascript
 // Node.js is NOT a language - it's a runtime environment
 // Built on Chrome's V8 JavaScript engine
@@ -22,6 +23,7 @@ I'll create a comprehensive, structured learning path to master Node.js from fun
 ```
 
 **The V8 Engine:**
+
 ```javascript
 // V8 compiles JavaScript to native machine code
 // Just-In-Time (JIT) compilation
@@ -48,6 +50,7 @@ point.y = 20;  // Another shape change
 ```
 
 **Event Loop Architecture:**
+
 ```javascript
 // The Node.js event loop has 6 phases:
 
@@ -95,6 +98,7 @@ console.log('6: Synchronous');
 ```
 
 **Process Object:**
+
 ```javascript
 // The global 'process' object provides info about Node.js process
 
@@ -153,6 +157,7 @@ process.on('SIGTERM', () => {
 ### 1.2 Module System
 
 **CommonJS Modules (Node.js default):**
+
 ```javascript
 // math.js - Exporting
 function add(a, b) {
@@ -195,6 +200,7 @@ const calc = new Calculator();
 ```
 
 **How `require()` Works:**
+
 ```javascript
 // Simplified implementation of require()
 function require(modulePath) {
@@ -265,6 +271,7 @@ console.log(counter2.getCount()); // 0 (different instances)
 ```
 
 **ES Modules (ESM) in Node.js:**
+
 ```javascript
 // package.json - Enable ES modules
 {
@@ -305,6 +312,7 @@ console.log(import.meta.url);  // file:///path/to/file.mjs
 ```
 
 **Module Resolution Algorithm:**
+
 ```javascript
 // require('./module') resolution order:
 
@@ -345,6 +353,7 @@ require('express');   // Searches up directory tree:
 ### 1.3 Built-in Core Modules
 
 **File System (fs):**
+
 ```javascript
 const fs = require('fs');
 const fsPromises = require('fs').promises;  // Promise-based API
@@ -415,6 +424,7 @@ readStream.pipe(writeStream);
 ```
 
 **Path Module:**
+
 ```javascript
 const path = require('path');
 
@@ -458,6 +468,7 @@ console.log(path.sep);  // '/' on Unix, '\' on Windows
 ```
 
 **HTTP Module:**
+
 ```javascript
 const http = require('http');
 
@@ -538,6 +549,7 @@ req.end();
 ```
 
 **Events Module:**
+
 ```javascript
 const EventEmitter = require('events');
 
@@ -606,4 +618,3 @@ Let me continue with more advanced Node.js concepts. Would you like me to procee
 6. **Testing** (Jest, Mocha, Supertest)
 7. **Performance & Scaling**
 8. **Deployment & Production**
-

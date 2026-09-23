@@ -4,10 +4,12 @@
 ### **PHASE 1: FOUNDATIONS (1-2 Weeks)**
 
 #### **Core Concepts:**
+
 1. **Event Loop Architecture**
    - Single-threaded, non-blocking I/O
    - LibUV, Event Queue, Call Stack
    - Microtasks vs Macrotasks
+
    ```javascript
    // Understand this execution order
    console.log('1');
@@ -30,6 +32,7 @@
 ### **PHASE 2: CORE APIs & PATTERNS (2-3 Weeks)**
 
 #### **Essential APIs:**
+
 ```javascript
 // Master these core modules:
 const fs = require('fs/promises');    // File System
@@ -40,6 +43,7 @@ const child_process = require('child_process'); // Child processes
 ```
 
 #### **Design Patterns to Master:**
+
 1. **Singleton Pattern** (for database connections)
 2. **Factory Pattern** (object creation)
 3. **Observer Pattern** (EventEmitter)
@@ -49,6 +53,7 @@ const child_process = require('child_process'); // Child processes
 ### **PHASE 3: ASYNC PROGRAMMING MASTERY (1-2 Weeks)**
 
 #### **All Async Patterns:**
+
 ```javascript
 // 1. Callbacks (avoid callback hell)
 function asyncOperation(callback) {
@@ -80,6 +85,7 @@ emitter.on('event', () => {});
 ### **PHASE 4: BUILDING SERVERS (2-3 Weeks)**
 
 #### **HTTP/HTTPS Servers:**
+
 ```javascript
 const http = require('http');
 const https = require('https');
@@ -99,6 +105,7 @@ const server = http.createServer(async (req, res) => {
 ### **PHASE 5: DATABASES & ORMs (2-3 Weeks)**
 
 #### **Master at least 2 databases:**
+
 1. **SQL** (PostgreSQL with pg/Sequelize/Knex)
 2. **NoSQL** (MongoDB with Mongoose)
 3. **Redis** for caching/sessions
@@ -132,6 +139,7 @@ try {
 ### **PHASE 6: ADVANCED TOPICS (3-4 Weeks)**
 
 #### **1. Performance Optimization**
+
 ```javascript
 // Cluster mode
 const cluster = require('cluster');
@@ -151,6 +159,7 @@ const { Worker, isMainThread } = require('worker_threads');
 ```
 
 #### **2. Security**
+
 - Helmet.js for headers
 - Rate limiting
 - Input validation/sanitization
@@ -158,6 +167,7 @@ const { Worker, isMainThread } = require('worker_threads');
 - SQL injection prevention
 
 #### **3. Testing**
+
 ```javascript
 // Test pyramid: Unit → Integration → E2E
 const { describe, it, before, after } = require('mocha');
@@ -170,6 +180,7 @@ const stub = sandbox.stub(api, 'call');
 ```
 
 #### **4. DevOps & Deployment**
+
 - Docker containers for Node.js
 - PM2 for process management
 - Nginx reverse proxy
@@ -179,6 +190,7 @@ const stub = sandbox.stub(api, 'call');
 ### **PHASE 7: ARCHITECTURE (2-3 Weeks)**
 
 #### **Design Scalable Applications:**
+
 1. **Microservices Architecture**
    - Service discovery
    - Message queues (RabbitMQ, Kafka)
@@ -197,6 +209,7 @@ const stub = sandbox.stub(api, 'call');
 ### **PHASE 8: REAL-WORLD PROJECTS**
 
 #### **Build These Projects:**
+
 1. **Real-time Chat App** (Socket.io, Redis)
 2. **E-commerce API** (Microservices, Payment integration)
 3. **Streaming Service** (Video/audio streaming with buffers)
@@ -206,6 +219,7 @@ const stub = sandbox.stub(api, 'call');
 ### **🛠️ ESSENTIAL TOOLS & LIBRARIES**
 
 #### **Development:**
+
 - **Debugging**: Node Inspector, ndb
 - **Profiling**: clinic.js, 0x
 - **Logging**: Winston, Pino with structured logging
@@ -213,6 +227,7 @@ const stub = sandbox.stub(api, 'call');
 - **API Documentation**: Swagger/OpenAPI
 
 #### **Production:**
+
 - **Monitoring**: Prometheus, Grafana
 - **Tracing**: Jaeger, OpenTelemetry
 - **APM**: New Relic, Datadog
@@ -220,11 +235,13 @@ const stub = sandbox.stub(api, 'call');
 ### **📖 LEARNING RESOURCES**
 
 #### **Official & Advanced:**
+
 1. [Node.js Official Docs](https://nodejs.org/en/docs/)
 2. [Node.js Design Patterns Book](https://www.nodejsdesignpatterns.com/)
 3. [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
 
 #### **Practice Platforms:**
+
 1. **LeetCode** (Node.js problems)
 2. **Advent of Code** (Algorithmic challenges)
 3. **Open Source Contributions** (Express, Koa, etc.)
@@ -260,6 +277,7 @@ const stub = sandbox.stub(api, 'call');
 ### **INTERVIEW PREPARATION**
 
 #### **Key Topics:**
+
 1. Event Loop and libuv
 2. Streams and Buffers
 3. Cluster vs Worker Threads
@@ -267,5 +285,3 @@ const stub = sandbox.stub(api, 'call');
 5. Database optimization
 6. Authentication strategies
 7. Caching techniques
-
-

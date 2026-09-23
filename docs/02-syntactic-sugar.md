@@ -26,7 +26,7 @@ const add = (a, b) => a + b;
 
 // ES5
 var add = function(a, b) {
-	return a + b;
+ return a + b;
 }.bind(this);
 ```
 
@@ -39,7 +39,7 @@ function greet(name = "World") {
 
 // ES5
 function greet(name) {
-	name = name || "World";
+ name = name || "World";
 }
 ```
 
@@ -52,7 +52,7 @@ function sum(...numbers) {
 
 // ES5
 function sum() {
-	var numbers = Array.prototype.slice.call(arguments);
+ var numbers = Array.prototype.slice.call(arguments);
 }
 ```
 
@@ -73,14 +73,14 @@ var arr = [1, 2].concat(otherArray);
 ```javascript
 // ES6
 const obj = {
-	method() {
-	}
+ method() {
+ }
 };
 
 // ES5
 var obj = {
-	method: function() {
-	}
+ method: function() {
+ }
 };
 ```
 
@@ -146,17 +146,17 @@ var name = person.name, age = person.age;
 ```javascript
 // ES6
 class Person extends Animal {
-	constructor(name) {
-		super(name);
-	}
+ constructor(name) {
+  super(name);
+ }
 
-	greet() {
-	}
+ greet() {
+ }
 }
 
 // ES5
 function Person(name) {
-	Animal.call(this, name);
+ Animal.call(this, name);
 }
 
 Person.prototype = Object.create(Animal.prototype);
@@ -236,11 +236,11 @@ console.log(iterator.next()); // {value: 1, done: false}
 
 ```javascript
 function* fibonacci() {
-	let [a, b] = [0, 1];
-	while (true) {
-		yield a; // Pause here, return value
-		[a, b] = [b, a + b];
-	}
+ let [a, b] = [0, 1];
+ while (true) {
+  yield a; // Pause here, return value
+  [a, b] = [b, a + b];
+ }
 }
 ```
 
@@ -257,7 +257,7 @@ for (const item of iterable) {
 
 ```javascript
 const promise = new Promise((resolve, reject) => {
-	// Async operation
+ // Async operation
 });
 promise.then(result => {
 }).catch(error => {
@@ -270,10 +270,10 @@ promise.then(result => {
 
 ```javascript
 const proxy = new Proxy(target, {
-	get(obj, prop) {
-		console.log(`Accessing ${prop}`);
-		return obj[prop];
-	}
+ get(obj, prop) {
+  console.log(`Accessing ${prop}`);
+  return obj[prop];
+ }
 });
 ```
 
@@ -343,20 +343,20 @@ Object.is(-0, +0); // false (vs -0 === +0 which is true)
 ```javascript
 // Combines syntactic sugar with new capabilities
 const obj = {
-	// Property shorthand (sugar)
-	name,
+ // Property shorthand (sugar)
+ name,
 
-	// Method shorthand (sugar)
-	greet() {
-	},
+ // Method shorthand (sugar)
+ greet() {
+ },
 
-	// Computed properties (sugar)
-	[methodName]() {
-	},
+ // Computed properties (sugar)
+ [methodName]() {
+ },
 
-	// But enables new patterns not possible in ES5
-	[Symbol.iterator]() { /* custom iterator */
-	}
+ // But enables new patterns not possible in ES5
+ [Symbol.iterator]() { /* custom iterator */
+ }
 };
 ```
 
@@ -372,7 +372,7 @@ const obj = {
 export let count = 0;
 
 export function increment() {
-	count++;
+ count++;
 } // Live binding!
 ```
 

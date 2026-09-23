@@ -810,7 +810,7 @@ var greet = function greet() {
 ## Summary Comparison Table
 
 | Feature | ES5 | ES6 | Winner |
-|---------|-----|-----|--------|
+| --------- | ----- | ----- | -------- |
 | **Variables** | `var` (function scope) | `let`/`const` (block scope) | **ES6** |
 | **Functions** | Regular functions, `this` issues | Arrow functions, lexical `this` | **ES6** |
 | **Strings** | Concatenation with `+` | Template literals | **ES6** |
@@ -882,17 +882,20 @@ class User {
 ## Conclusion
 
 **ES6 is a massive improvement over ES5:**
+
 - **70% syntactic sugar** that makes code cleaner, safer, and more maintainable
 - **30% new capabilities** that enable patterns impossible in ES5
 - The sugar alone is worth it - cleaner code has fewer bugs
 - Modern JavaScript development is essentially ES6+ (with transpilation for legacy support)
 
 **When to use ES5:**
+
 - Legacy codebases that can't be updated
 - Environments without transpilation tooling
 - Learning JavaScript fundamentals (arguable)
 
 **When to use ES6:**
+
 - All new projects (default choice)
 - Modern web applications
 - Node.js applications (native support since v6)

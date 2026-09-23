@@ -195,30 +195,30 @@ Message Format:
 */
 
 class MessageEncoder {
-	static encode(type, payload) {
-		const payloadBuf = Buffer.from(payload);
-		const headerBuf = Buffer.alloc(4);
+ static encode(type, payload) {
+  const payloadBuf = Buffer.from(payload);
+  const headerBuf = Buffer.alloc(4);
 
-		headerBuf.writeUInt8(1, 0);              // Version
-		headerBuf.writeUInt8(type, 1);           // Type
-		headerBuf.writeUInt16BE(payloadBuf.length, 2); // Length
+  headerBuf.writeUInt8(1, 0);              // Version
+  headerBuf.writeUInt8(type, 1);           // Type
+  headerBuf.writeUInt16BE(payloadBuf.length, 2); // Length
 
-		return Buffer.concat([headerBuf, payloadBuf]);
-	}
+  return Buffer.concat([headerBuf, payloadBuf]);
+ }
 
-	static decode(buffer) {
-		const version = buffer.readUInt8(0);
-		const type = buffer.readUInt8(1);
-		const length = buffer.readUInt16BE(2);
-		const payload = buffer.slice(4, 4 + length);
+ static decode(buffer) {
+  const version = buffer.readUInt8(0);
+  const type = buffer.readUInt8(1);
+  const length = buffer.readUInt16BE(2);
+  const payload = buffer.slice(4, 4 + length);
 
-		return {
-			version,
-			type,
-			length,
-			payload: payload.toString()
-		};
-	}
+  return {
+   version,
+   type,
+   length,
+   payload: payload.toString()
+  };
+ }
 }
 
 // Usage
@@ -258,14 +258,14 @@ const large = Buffer.allocUnsafe(10000); // > 4KB, no pooling
 // Performance comparison
 console.time('alloc');
 for (let i = 0; i < 100000; i++) {
-	Buffer.alloc(100);
+ Buffer.alloc(100);
 }
 console.timeEnd('alloc');
 // alloc: ~50ms
 
 console.time('allocUnsafe');
 for (let i = 0; i < 100000; i++) {
-	Buffer.allocUnsafe(100);
+ Buffer.allocUnsafe(100);
 }
 console.timeEnd('allocUnsafe');
 // allocUnsafe: ~10ms (5x faster!)
@@ -275,13 +275,13 @@ const buffers = [];
 
 // Bad: Creates many small buffers
 for (let i = 0; i < 1000; i++) {
-	buffers.push(Buffer.alloc(10));
+ buffers.push(Buffer.alloc(10));
 }
 
 // Better: Allocate once, slice as needed
 const largeBuf = Buffer.alloc(10000);
 for (let i = 0; i < 1000; i++) {
-	buffers.push(largeBuf.slice(i * 10, (i + 1) * 10));
+ buffers.push(largeBuf.slice(i * 10, (i + 1) * 10));
 }
 
 // Concatenating Buffers
@@ -290,8 +290,8 @@ for (let i = 0; i < 1000; i++) {
 // ❌ BAD: Inefficient (creates intermediate buffers)
 let result = Buffer.alloc(0);
 for (let i = 0; i < 1000; i++) {
-	const chunk = Buffer.from(`Chunk ${i}\n`);
-	result = Buffer.concat([result, chunk]);
+ const chunk = Buffer.from(`Chunk ${i}\n`);
+ result = Buffer.concat([result, chunk]);
 }
 
 // ✅ GOOD: Collect first, then concat once
@@ -299,9 +299,9 @@ const chunks = [];
 let totalLength = 0;
 
 for (let i = 0; i < 1000; i++) {
-	const chunk = Buffer.from(`Chunk ${i}\n`);
-	chunks.push(chunk);
-	totalLength += chunk.length;
+ const chunk = Buffer.from(`Chunk ${i}\n`);
+ chunks.push(chunk);
+ totalLength += chunk.length;
 }
 
 const efficient = Buffer.concat(chunks, totalLength);
@@ -311,8 +311,8 @@ const knownSize = Buffer.allocUnsafe(totalLength);
 let offset = 0;
 
 for (const chunk of chunks) {
-	chunk.copy(knownSize, offset);
-	offset += chunk.length;
+ chunk.copy(knownSize, offset);
+ offset += chunk.length;
 }
 ```
 
@@ -438,21 +438,21 @@ console.log(data.toString());
 
 // ✅ GOOD: Stream the file - uses ~64KB chunks
 const readStream = fs.createReadStream('huge-file.txt', {
-	encoding: 'utf8',
-	highWaterMark: 64 * 1024  // 64KB chunk size
+ encoding: 'utf8',
+ highWaterMark: 64 * 1024  // 64KB chunk size
 });
 
 readStream.on('data', (chunk) => {
-	console.log(`Received ${chunk.length} bytes`);
-	// Process chunk - only this chunk in memory
+ console.log(`Received ${chunk.length} bytes`);
+ // Process chunk - only this chunk in memory
 });
 
 readStream.on('end', () => {
-	console.log('Finished reading file');
+ console.log('Finished reading file');
 });
 
 readStream.on('error', (error) => {
-	console.error('Error:', error);
+ console.error('Error:', error);
 });
 ```
 
@@ -467,48 +467,48 @@ const fs = require('fs');
 
 // 1. From file
 const fileStream = fs.createReadStream('file.txt', {
-	encoding: 'utf8',
-	highWaterMark: 16 * 1024,  // 16KB chunks (default: 64KB)
-	start: 0,                   // Start position
-	end: 100                    // End position (read first 100 bytes)
+ encoding: 'utf8',
+ highWaterMark: 16 * 1024,  // 16KB chunks (default: 64KB)
+ start: 0,                   // Start position
+ end: 100                    // End position (read first 100 bytes)
 });
 
 // 2. Custom readable stream
 class NumberStream extends Readable {
-	constructor(max) {
-		super();
-		this.current = 0;
-		this.max = max;
-	}
+ constructor(max) {
+  super();
+  this.current = 0;
+  this.max = max;
+ }
 
-	_read() {
-		if (this.current <= this.max) {
-			// Push data to internal buffer
-			this.push(String(this.current++) + '\n');
-		} else {
-			// Signal end of stream
-			this.push(null);
-		}
-	}
+ _read() {
+  if (this.current <= this.max) {
+   // Push data to internal buffer
+   this.push(String(this.current++) + '\n');
+  } else {
+   // Signal end of stream
+   this.push(null);
+  }
+ }
 }
 
 const numbers = new NumberStream(10);
 numbers.on('data', (chunk) => {
-	console.log('Number:', chunk.toString().trim());
+ console.log('Number:', chunk.toString().trim());
 });
 
 // 3. Create from array/iterable
 const arrayStream = Readable.from(['Hello', 'World', '!']);
 arrayStream.on('data', (chunk) => {
-	console.log('Chunk:', chunk);
+ console.log('Chunk:', chunk);
 });
 
 // 4. Create from async generator
 async function* generate() {
-	for (let i = 0; i < 5; i++) {
-		await new Promise(resolve => setTimeout(resolve, 100));
-		yield `Item ${i}`;
-	}
+ for (let i = 0; i < 5; i++) {
+  await new Promise(resolve => setTimeout(resolve, 100));
+  yield `Item ${i}`;
+ }
 }
 
 const generatorStream = Readable.from(generate());
@@ -523,7 +523,7 @@ const flowing = fs.createReadStream('file.txt');
 
 // Attaching 'data' listener starts flowing
 flowing.on('data', (chunk) => {
-	console.log('Received chunk:', chunk.length);
+ console.log('Received chunk:', chunk.length);
 });
 
 // Control flow
@@ -537,19 +537,19 @@ const paused = fs.createReadStream('file.txt');
 
 // Use readable event
 paused.on('readable', () => {
-	let chunk;
-	// read() returns null when no more data
-	while ((chunk = paused.read()) !== null) {
-		console.log('Read chunk:', chunk.length);
-	}
+ let chunk;
+ // read() returns null when no more data
+ while ((chunk = paused.read()) !== null) {
+  console.log('Read chunk:', chunk.length);
+ }
 });
 
 // Or read specific amount
 paused.on('readable', () => {
-	const chunk = paused.read(100); // Read 100 bytes
-	if (chunk) {
-		console.log('Read 100 bytes');
-	}
+ const chunk = paused.read(100); // Read 100 bytes
+ if (chunk) {
+  console.log('Read 100 bytes');
+ }
 });
 
 // Stream Events
@@ -558,23 +558,23 @@ paused.on('readable', () => {
 const readable = fs.createReadStream('file.txt');
 
 readable.on('open', (fd) => {
-	console.log('File opened, descriptor:', fd);
+ console.log('File opened, descriptor:', fd);
 });
 
 readable.on('data', (chunk) => {
-	console.log('Data received:', chunk.length);
+ console.log('Data received:', chunk.length);
 });
 
 readable.on('end', () => {
-	console.log('No more data');
+ console.log('No more data');
 });
 
 readable.on('close', () => {
-	console.log('Stream closed');
+ console.log('Stream closed');
 });
 
 readable.on('error', (error) => {
-	console.error('Error:', error);
+ console.error('Error:', error);
 });
 
 // Backpressure handling
@@ -584,23 +584,23 @@ const source = fs.createReadStream('large-file.txt');
 const destination = fs.createWriteStream('copy.txt');
 
 source.on('data', (chunk) => {
-	const canContinue = destination.write(chunk);
+ const canContinue = destination.write(chunk);
 
-	if (!canContinue) {
-		// Destination buffer is full
-		console.log('Backpressure - pausing read');
-		source.pause();
-	}
+ if (!canContinue) {
+  // Destination buffer is full
+  console.log('Backpressure - pausing read');
+  source.pause();
+ }
 });
 
 destination.on('drain', () => {
-	// Destination buffer drained
-	console.log('Drain - resuming read');
-	source.resume();
+ // Destination buffer drained
+ console.log('Drain - resuming read');
+ source.resume();
 });
 
 source.on('end', () => {
-	destination.end();
+ destination.end();
 });
 ```
 
@@ -615,8 +615,8 @@ const fs = require('fs');
 
 // 1. File writable stream
 const fileWriter = fs.createWriteStream('output.txt', {
-	encoding: 'utf8',
-	flags: 'a'  // 'a' = append, 'w' = write (default)
+ encoding: 'utf8',
+ flags: 'a'  // 'a' = append, 'w' = write (default)
 });
 
 fileWriter.write('Hello ');
@@ -625,25 +625,25 @@ fileWriter.end(); // Signal completion
 
 // 2. Custom writable stream
 class LogStream extends Writable {
-	_write(chunk, encoding, callback) {
-		console.log(`[LOG] ${chunk.toString()}`);
-		callback(); // Signal write completion
-	}
+ _write(chunk, encoding, callback) {
+  console.log(`[LOG] ${chunk.toString()}`);
+  callback(); // Signal write completion
+ }
 
-	_writev(chunks, callback) {
-		// Called when multiple writes are buffered
-		console.log(`[LOG] Writing ${chunks.length} chunks`);
-		chunks.forEach(({ chunk }) => {
-			console.log(`  - ${chunk.toString()}`);
-		});
-		callback();
-	}
+ _writev(chunks, callback) {
+  // Called when multiple writes are buffered
+  console.log(`[LOG] Writing ${chunks.length} chunks`);
+  chunks.forEach(({ chunk }) => {
+   console.log(`  - ${chunk.toString()}`);
+  });
+  callback();
+ }
 
-	_final(callback) {
-		// Called before stream closes
-		console.log('[LOG] Stream closing');
-		callback();
-	}
+ _final(callback) {
+  // Called before stream closes
+  console.log('[LOG] Stream closing');
+  callback();
+ }
 }
 
 const logger = new LogStream();
@@ -660,42 +660,42 @@ const writer = fs.createWriteStream('data.txt');
 const canContinue = writer.write('Some data\n');
 
 if (!canContinue) {
-	console.log('Internal buffer full, backpressure!');
-	writer.once('drain', () => {
-		console.log('Buffer drained, can write more');
-	});
+ console.log('Internal buffer full, backpressure!');
+ writer.once('drain', () => {
+  console.log('Buffer drained, can write more');
+ });
 }
 
 // Proper backpressure handling
 function writeMillionLines(writer, encoding, callback) {
-	let i = 1000000;
+ let i = 1000000;
 
-	function write() {
-		let ok = true;
+ function write() {
+  let ok = true;
 
-		do {
-			i--;
-			if (i === 0) {
-				// Last write
-				writer.write('Last line\n', encoding, callback);
-			} else {
-				// Keep writing until buffer full
-				ok = writer.write(`Line ${i}\n`, encoding);
-			}
-		} while (i > 0 && ok);
+  do {
+   i--;
+   if (i === 0) {
+    // Last write
+    writer.write('Last line\n', encoding, callback);
+   } else {
+    // Keep writing until buffer full
+    ok = writer.write(`Line ${i}\n`, encoding);
+   }
+  } while (i > 0 && ok);
 
-		if (i > 0) {
-			// Buffer full, wait for drain
-			writer.once('drain', write);
-		}
-	}
+  if (i > 0) {
+   // Buffer full, wait for drain
+   writer.once('drain', write);
+  }
+ }
 
-	write();
+ write();
 }
 
 const output = fs.createWriteStream('million-lines.txt');
 writeMillionLines(output, 'utf8', () => {
-	console.log('Finished writing 1 million lines');
+ console.log('Finished writing 1 million lines');
 });
 
 // Writable Stream Events
@@ -704,23 +704,23 @@ writeMillionLines(output, 'utf8', () => {
 const writable = fs.createWriteStream('output.txt');
 
 writable.on('open', (fd) => {
-	console.log('File opened');
+ console.log('File opened');
 });
 
 writable.on('drain', () => {
-	console.log('Buffer drained, ready for more');
+ console.log('Buffer drained, ready for more');
 });
 
 writable.on('finish', () => {
-	console.log('All writes completed');
+ console.log('All writes completed');
 });
 
 writable.on('close', () => {
-	console.log('Stream closed');
+ console.log('Stream closed');
 });
 
 writable.on('error', (error) => {
-	console.error('Error:', error);
+ console.error('Error:', error);
 });
 
 // Cork and uncork (batching writes)
@@ -737,7 +737,7 @@ batchWriter.write('Line 3\n');
 
 // Uncork flushes buffered writes
 process.nextTick(() => {
-	batchWriter.uncork();
+ batchWriter.uncork();
 });
 
 // Multiple cork/uncork
@@ -760,25 +760,25 @@ const fs = require('fs');
 // ───────────────────────────────────────────
 
 class DuplexStream extends Duplex {
-	constructor(options) {
-		super(options);
-		this.data = [];
-	}
+ constructor(options) {
+  super(options);
+  this.data = [];
+ }
 
-	_write(chunk, encoding, callback) {
-		// Handle incoming data
-		this.data.push(chunk);
-		callback();
-	}
+ _write(chunk, encoding, callback) {
+  // Handle incoming data
+  this.data.push(chunk);
+  callback();
+ }
 
-	_read(size) {
-		// Provide outgoing data
-		if (this.data.length > 0) {
-			this.push(this.data.shift());
-		} else {
-			this.push(null); // No more data
-		}
-	}
+ _read(size) {
+  // Provide outgoing data
+  if (this.data.length > 0) {
+   this.push(this.data.shift());
+  } else {
+   this.push(null); // No more data
+  }
+ }
 }
 
 const duplex = new DuplexStream();
@@ -790,7 +790,7 @@ duplex.end();
 
 // Read from it
 duplex.on('data', (chunk) => {
-	console.log('Received:', chunk.toString());
+ console.log('Received:', chunk.toString());
 });
 
 // Transform Streams (modify data as it passes through)
@@ -798,82 +798,82 @@ duplex.on('data', (chunk) => {
 
 // 1. Simple transform: Uppercase
 class UpperCaseTransform extends Transform {
-	_transform(chunk, encoding, callback) {
-		// Transform the chunk
-		const upperChunk = chunk.toString().toUpperCase();
-		this.push(upperChunk);
-		callback();
-	}
+ _transform(chunk, encoding, callback) {
+  // Transform the chunk
+  const upperChunk = chunk.toString().toUpperCase();
+  this.push(upperChunk);
+  callback();
+ }
 }
 
 const upperCase = new UpperCaseTransform();
 
 // Pipe through transform
 process.stdin
-	.pipe(upperCase)
-	.pipe(process.stdout);
+ .pipe(upperCase)
+ .pipe(process.stdout);
 
 // 2. CSV to JSON transform
 class CsvToJsonTransform extends Transform {
-	constructor(options) {
-		super(options);
-		this.headers = null;
-		this.buffer = '';
-	}
+ constructor(options) {
+  super(options);
+  this.headers = null;
+  this.buffer = '';
+ }
 
-	_transform(chunk, encoding, callback) {
-		this.buffer += chunk.toString();
+ _transform(chunk, encoding, callback) {
+  this.buffer += chunk.toString();
 
-		const lines = this.buffer.split('\n');
-		this.buffer = lines.pop(); // Keep incomplete line
+  const lines = this.buffer.split('\n');
+  this.buffer = lines.pop(); // Keep incomplete line
 
-		lines.forEach((line, index) => {
-			if (!this.headers) {
-				this.headers = line.split(',');
-			} else {
-				const values = line.split(',');
-				const obj = {};
+  lines.forEach((line, index) => {
+   if (!this.headers) {
+    this.headers = line.split(',');
+   } else {
+    const values = line.split(',');
+    const obj = {};
 
-				this.headers.forEach((header, i) => {
-					obj[header] = values[i];
-				});
+    this.headers.forEach((header, i) => {
+     obj[header] = values[i];
+    });
 
-				this.push(JSON.stringify(obj) + '\n');
-			}
-		});
+    this.push(JSON.stringify(obj) + '\n');
+   }
+  });
 
-		callback();
-	}
+  callback();
+ }
 
-	_flush(callback) {
-		// Handle remaining buffer
-		if (this.buffer && this.headers) {
-			const values = this.buffer.split(',');
-			const obj = {};
+ _flush(callback) {
+  // Handle remaining buffer
+  if (this.buffer && this.headers) {
+   const values = this.buffer.split(',');
+   const obj = {};
 
-			this.headers.forEach((header, i) => {
-				obj[header] = values[i];
-			});
+   this.headers.forEach((header, i) => {
+    obj[header] = values[i];
+   });
 
-			this.push(JSON.stringify(obj) + '\n');
-		}
-		callback();
-	}
+   this.push(JSON.stringify(obj) + '\n');
+  }
+  callback();
+ }
 }
 
 // Usage
 const csvToJson = new CsvToJsonTransform();
 
 fs.createReadStream('data.csv')
-	.pipe(csvToJson)
-	.pipe(fs.createWriteStream('data.json'));
+ .pipe(csvToJson)
+ .pipe(fs.createWriteStream('data.json'));
 
 // 3. Compression transform
 const zlib = require('zlib');
 
 fs.createReadStream('file.txt')
-	.pipe(zlib.createGzip())  // Built-in transform stream
-	.pipe(fs.createWriteStream('file.txt.gz'));
+ .pipe(zlib.createGzip())  // Built-in transform stream
+ .pipe(fs.createWriteStream('file.txt.gz'));
 
 // 4. Encryption transform
 const crypto = require('crypto');
@@ -886,66 +886,66 @@ const iv = crypto.randomBytes(16);
 const encryptStream = crypto.createCipheriv(algorithm, key, iv);
 
 fs.createReadStream('secret.txt')
-	.pipe(encryptStream)
-	.pipe(fs.createWriteStream('secret.txt.enc'));
+ .pipe(encryptStream)
+ .pipe(fs.createWriteStream('secret.txt.enc'));
 
 // Decryption
 const decryptStream = crypto.createDecipheriv(algorithm, key, iv);
 
 fs.createReadStream('secret.txt.enc')
-	.pipe(decryptStream)
-	.pipe(fs.createWriteStream('secret-decrypted.txt'));
+ .pipe(decryptStream)
+ .pipe(fs.createWriteStream('secret-decrypted.txt'));
 
 // 5. Line-by-line transform
 class LineTransform extends Transform {
-	constructor(options) {
-		super(options);
-		this.buffer = '';
-	}
+ constructor(options) {
+  super(options);
+  this.buffer = '';
+ }
 
-	_transform(chunk, encoding, callback) {
-		this.buffer += chunk.toString();
+ _transform(chunk, encoding, callback) {
+  this.buffer += chunk.toString();
 
-		const lines = this.buffer.split('\n');
-		this.buffer = lines.pop();
+  const lines = this.buffer.split('\n');
+  this.buffer = lines.pop();
 
-		lines.forEach(line => {
-			this.push(line + '\n');
-		});
+  lines.forEach(line => {
+   this.push(line + '\n');
+  });
 
-		callback();
-	}
+  callback();
+ }
 
-	_flush(callback) {
-		if (this.buffer) {
-			this.push(this.buffer);
-		}
-		callback();
-	}
+ _flush(callback) {
+  if (this.buffer) {
+   this.push(this.buffer);
+  }
+  callback();
+ }
 }
 
 // Add line numbers
 class AddLineNumbers extends Transform {
-	constructor(options) {
-		super(options);
-		this.lineNumber = 0;
-	}
+ constructor(options) {
+  super(options);
+  this.lineNumber = 0;
+ }
 
-	_transform(chunk, encoding, callback) {
-		this.lineNumber++;
-		const numbered = `${this.lineNumber}: ${chunk}`;
-		this.push(numbered);
-		callback();
-	}
+ _transform(chunk, encoding, callback) {
+  this.lineNumber++;
+  const numbered = `${this.lineNumber}: ${chunk}`;
+  this.push(numbered);
+  callback();
+ }
 }
 
 const lineTransform = new LineTransform();
 const addNumbers = new AddLineNumbers();
 
 fs.createReadStream('file.txt')
-	.pipe(lineTransform)
-	.pipe(addNumbers)
-	.pipe(process.stdout);
+ .pipe(lineTransform)
+ .pipe(addNumbers)
+ .pipe(process.stdout);
 ```
 
 ### 2.5 Stream Piping and Composition
@@ -961,41 +961,41 @@ const crypto = require('crypto');
 
 // Simple pipe
 fs.createReadStream('input.txt')
-	.pipe(fs.createWriteStream('output.txt'));
+ .pipe(fs.createWriteStream('output.txt'));
 
 // Chained pipes
 fs.createReadStream('file.txt')
-	.pipe(zlib.createGzip())
-	.pipe(fs.createWriteStream('file.txt.gz'));
+ .pipe(zlib.createGzip())
+ .pipe(fs.createWriteStream('file.txt.gz'));
 
 // Multiple transforms
 fs.createReadStream('data.csv')
-	.pipe(new CsvToJsonTransform())
-	.pipe(new FilterTransform())
-	.pipe(new FormatTransform())
-	.pipe(fs.createWriteStream('output.json'));
+ .pipe(new CsvToJsonTransform())
+ .pipe(new FilterTransform())
+ .pipe(new FormatTransform())
+ .pipe(fs.createWriteStream('output.json'));
 
 // Error Handling with Pipes
 // ─────────────────────────
 
 // ❌ BAD: Errors not properly handled
 fs.createReadStream('input.txt')
-	.pipe(zlib.createGzip())
-	.pipe(fs.createWriteStream('output.txt.gz'));
+ .pipe(zlib.createGzip())
+ .pipe(fs.createWriteStream('output.txt.gz'));
 // If any stream errors, it might not be caught!
 
 // ✅ GOOD: Use pipeline() for proper error handling
 pipeline(
-	fs.createReadStream('input.txt'),
-	zlib.createGzip(),
-	fs.createWriteStream('output.txt.gz'),
-	(error) => {
-		if (error) {
-			console.error('Pipeline failed:', error);
-		} else {
-			console.log('Pipeline succeeded');
-		}
-	}
+ fs.createReadStream('input.txt'),
+ zlib.createGzip(),
+ fs.createWriteStream('output.txt.gz'),
+ (error) => {
+  if (error) {
+   console.error('Pipeline failed:', error);
+  } else {
+   console.log('Pipeline succeeded');
+  }
+ }
 );
 
 // Complex Pipeline Example
@@ -1003,66 +1003,66 @@ pipeline(
 
 // Log transform
 class LogTransform extends Transform {
-	constructor(label) {
-		super();
-		this.label = label;
-		this.bytes = 0;
-	}
+ constructor(label) {
+  super();
+  this.label = label;
+  this.bytes = 0;
+ }
 
-	_transform(chunk, encoding, callback) {
-		this.bytes += chunk.length;
-		console.log(`[${this.label}] Processed ${this.bytes} bytes`);
-		this.push(chunk);
-		callback();
-	}
+ _transform(chunk, encoding, callback) {
+  this.bytes += chunk.length;
+  console.log(`[${this.label}] Processed ${this.bytes} bytes`);
+  this.push(chunk);
+  callback();
+ }
 }
 
 // Filter lines containing specific text
 class FilterLinesTransform extends Transform {
-	constructor(searchTerm) {
-		super();
-		this.searchTerm = searchTerm;
-		this.buffer = '';
-	}
+ constructor(searchTerm) {
+  super();
+  this.searchTerm = searchTerm;
+  this.buffer = '';
+ }
 
-	_transform(chunk, encoding, callback) {
-		this.buffer += chunk.toString();
-		const lines = this.buffer.split('\n');
-		this.buffer = lines.pop();
+ _transform(chunk, encoding, callback) {
+  this.buffer += chunk.toString();
+  const lines = this.buffer.split('\n');
+  this.buffer = lines.pop();
 
-		lines.forEach(line => {
-			if (line.includes(this.searchTerm)) {
-				this.push(line + '\n');
-			}
-		});
+  lines.forEach(line => {
+   if (line.includes(this.searchTerm)) {
+    this.push(line + '\n');
+   }
+  });
 
-		callback();
-	}
+  callback();
+ }
 
-	_flush(callback) {
-		if (this.buffer && this.buffer.includes(this.searchTerm)) {
-			this.push(this.buffer);
-		}
-		callback();
-	}
+ _flush(callback) {
+  if (this.buffer && this.buffer.includes(this.searchTerm)) {
+   this.push(this.buffer);
+  }
+  callback();
+ }
 }
 
 // Build complex pipeline
 pipeline(
-	fs.createReadStream('large-log.txt'),
-	new LogTransform('READ'),
-	new FilterLinesTransform('ERROR'),
-	new LogTransform('FILTER'),
-	zlib.createGzip(),
-	new LogTransform('COMPRESS'),
-	fs.createWriteStream('errors.txt.gz'),
-	(error) => {
-		if (error) {
-			console.error('Pipeline failed:', error);
-			process.exit(1);
-		}
-		console.log('Error log compressed successfully');
-	}
+ fs.createReadStream('large-log.txt'),
+ new LogTransform('READ'),
+ new FilterLinesTransform('ERROR'),
+ new LogTransform('FILTER'),
+ zlib.createGzip(),
+ new LogTransform('COMPRESS'),
+ fs.createWriteStream('errors.txt.gz'),
+ (error) => {
+  if (error) {
+   console.error('Pipeline failed:', error);
+   process.exit(1);
+  }
+  console.log('Error log compressed successfully');
+ }
 );
 
 // Parallel Streams
@@ -1089,19 +1089,19 @@ source.pipe(pass3).pipe(dest3);
 const { Readable } = require('stream');
 
 function mergeStreams(...streams) {
-	let pass = new PassThrough();
-	let waiting = streams.length;
+ let pass = new PassThrough();
+ let waiting = streams.length;
 
-	for (let stream of streams) {
-		stream.once('end', () => {
-			if (--waiting === 0) {
-				pass.end();
-			}
-		});
-		stream.pipe(pass, { end: false });
-	}
+ for (let stream of streams) {
+  stream.once('end', () => {
+   if (--waiting === 0) {
+    pass.end();
+   }
+  });
+  stream.pipe(pass, { end: false });
+ }
 
-	return pass;
+ return pass;
 }
 
 const file1 = fs.createReadStream('file1.txt');
@@ -1123,57 +1123,57 @@ merged.pipe(fs.createWriteStream('merged.txt'));
 
 // Small files: lower highWaterMark (16KB)
 const smallFile = fs.createReadStream('small.txt', {
-	highWaterMark: 16 * 1024
+ highWaterMark: 16 * 1024
 });
 
 // Large files: higher highWaterMark (256KB or more)
 const largeFile = fs.createReadStream('huge.txt', {
-	highWaterMark: 256 * 1024
+ highWaterMark: 256 * 1024
 });
 
 // 2. Object mode for non-buffer data
 // ──────────────────────────────────
 
 class ObjectStream extends Transform {
-	constructor() {
-		super({ objectMode: true });  // Accept objects instead of buffers
-	}
+ constructor() {
+  super({ objectMode: true });  // Accept objects instead of buffers
+ }
 
-	_transform(obj, encoding, callback) {
-		// Process object
-		obj.processed = true;
-		obj.timestamp = Date.now();
-		this.push(obj);
-		callback();
-	}
+ _transform(obj, encoding, callback) {
+  // Process object
+  obj.processed = true;
+  obj.timestamp = Date.now();
+  this.push(obj);
+  callback();
+ }
 }
 
 const objectStream = new ObjectStream();
 
 Readable.from([
-	{ id: 1, name: 'Alice' },
-	{ id: 2, name: 'Bob' },
-	{ id: 3, name: 'Charlie' }
+ { id: 1, name: 'Alice' },
+ { id: 2, name: 'Bob' },
+ { id: 3, name: 'Charlie' }
 ])
-	.pipe(objectStream)
-	.on('data', (obj) => {
-		console.log(obj);
-		// { id: 1, name: 'Alice', processed: true, timestamp: ... }
-	});
+ .pipe(objectStream)
+ .on('data', (obj) => {
+  console.log(obj);
+  // { id: 1, name: 'Alice', processed: true, timestamp: ... }
+ });
 
 // 3. Async iterators with streams (Node.js 10+)
 // ──────────────────────────────────────────────
 
 async function processFile() {
-	const stream = fs.createReadStream('data.txt', { encoding: 'utf8' });
+ const stream = fs.createReadStream('data.txt', { encoding: 'utf8' });
 
-	for await (const chunk of stream) {
-		console.log('Processing chunk:', chunk.length);
-		// Can use await here for async operations
-		await someAsyncOperation(chunk);
-	}
+ for await (const chunk of stream) {
+  console.log('Processing chunk:', chunk.length);
+  // Can use await here for async operations
+  await someAsyncOperation(chunk);
+ }
 
-	console.log('File processed');
+ console.log('File processed');
 }
 
 // 4. Stream composition with readable-stream
@@ -1183,14 +1183,14 @@ const { compose } = require('stream');
 
 // Compose multiple transforms into one
 const processStream = compose(
-	new FilterTransform(),
-	new MapTransform(),
-	zlib.createGzip()
+ new FilterTransform(),
+ new MapTransform(),
+ zlib.createGzip()
 );
 
 fs.createReadStream('input.txt')
-	.pipe(processStream)
-	.pipe(fs.createWriteStream('output.txt.gz'));
+ .pipe(processStream)
+ .pipe(fs.createWriteStream('output.txt.gz'));
 
 // Common Pitfalls and Solutions
 // ─────────────────────────────
@@ -1198,24 +1198,24 @@ fs.createReadStream('input.txt')
 // ❌ PITFALL 1: Memory leaks from unclosed streams
 const badStream = fs.createReadStream('file.txt');
 badStream.on('data', () => {
-	// If we don't consume all data and don't close...
-	badStream.destroy(); // Must destroy to free resources
+ // If we don't consume all data and don't close...
+ badStream.destroy(); // Must destroy to free resources
 });
 
 // ✅ SOLUTION: Always handle end/error and cleanup
 const goodStream = fs.createReadStream('file.txt');
 
 goodStream.on('data', (chunk) => {
-	// Process
+ // Process
 });
 
 goodStream.on('end', () => {
-	console.log('Stream ended');
+ console.log('Stream ended');
 });
 
 goodStream.on('error', (error) => {
-	console.error('Stream error:', error);
-	goodStream.destroy();
+ console.error('Stream error:', error);
+ goodStream.destroy();
 });
 
 // ❌ PITFALL 2: Not handling backpressure
@@ -1223,7 +1223,7 @@ const source = fs.createReadStream('huge.txt');
 const dest = fs.createWriteStream('copy.txt');
 
 source.on('data', (chunk) => {
-	dest.write(chunk); // Ignoring return value = backpressure issues!
+ dest.write(chunk); // Ignoring return value = backpressure issues!
 });
 
 // ✅ SOLUTION: Use pipe() or handle backpressure manually
@@ -1231,20 +1231,20 @@ source.pipe(dest);  // Pipe handles backpressure automatically
 
 // ❌ PITFALL 3: Error handling in pipe chains
 fs.createReadStream('input.txt')
-	.pipe(transform)
-	.pipe(fs.createWriteStream('output.txt'));
+ .pipe(transform)
+ .pipe(fs.createWriteStream('output.txt'));
 // Errors in transform might crash the app!
 
 // ✅ SOLUTION: Use pipeline()
 pipeline(
-	fs.createReadStream('input.txt'),
-	transform,
-	fs.createWriteStream('output.txt'),
-	(error) => {
-		if (error) {
-			console.error('Pipeline error:', error);
-		}
-	}
+ fs.createReadStream('input.txt'),
+ transform,
+ fs.createWriteStream('output.txt'),
+ (error) => {
+  if (error) {
+   console.error('Pipeline error:', error);
+  }
+ }
 );
 
 // Real-world example: Processing large CSV file
@@ -1255,85 +1255,85 @@ const { createReadStream, createWriteStream } = require('fs');
 const { Transform } = require('stream');
 
 class CsvParser extends Transform {
-	constructor() {
-		super({ objectMode: true });
-		this.headers = null;
-		this.lineBuffer = '';
-	}
+ constructor() {
+  super({ objectMode: true });
+  this.headers = null;
+  this.lineBuffer = '';
+ }
 
-	_transform(chunk, encoding, callback) {
-		this.lineBuffer += chunk.toString();
-		const lines = this.lineBuffer.split('\n');
-		this.lineBuffer = lines.pop();
+ _transform(chunk, encoding, callback) {
+  this.lineBuffer += chunk.toString();
+  const lines = this.lineBuffer.split('\n');
+  this.lineBuffer = lines.pop();
 
-		lines.forEach(line => {
-			if (!this.headers) {
-				this.headers = line.split(',');
-			} else {
-				const values = line.split(',');
-				const record = {};
-				this.headers.forEach((h, i) => {
-					record[h] = values[i];
-				});
-				this.push(record);
-			}
-		});
+  lines.forEach(line => {
+   if (!this.headers) {
+    this.headers = line.split(',');
+   } else {
+    const values = line.split(',');
+    const record = {};
+    this.headers.forEach((h, i) => {
+     record[h] = values[i];
+    });
+    this.push(record);
+   }
+  });
 
-		callback();
-	}
+  callback();
+ }
 }
 
 class DataValidator extends Transform {
-	constructor() {
-		super({ objectMode: true });
-	}
+ constructor() {
+  super({ objectMode: true });
+ }
 
-	_transform(record, encoding, callback) {
-		// Validate and filter
-		if (record.age && parseInt(record.age) > 18) {
-			this.push(record);
-		}
-		callback();
-	}
+ _transform(record, encoding, callback) {
+  // Validate and filter
+  if (record.age && parseInt(record.age) > 18) {
+   this.push(record);
+  }
+  callback();
+ }
 }
 
 class JsonSerializer extends Transform {
-	constructor() {
-		super({ objectMode: true });
-		this.first = true;
-	}
+ constructor() {
+  super({ objectMode: true });
+  this.first = true;
+ }
 
-	_transform(record, encoding, callback) {
-		if (this.first) {
-			this.push('[\n');
-			this.first = false;
-		} else {
-			this.push(',\n');
-		}
-		this.push(JSON.stringify(record, null, 2));
-		callback();
-	}
+ _transform(record, encoding, callback) {
+  if (this.first) {
+   this.push('[\n');
+   this.first = false;
+  } else {
+   this.push(',\n');
+  }
+  this.push(JSON.stringify(record, null, 2));
+  callback();
+ }
 
-	_flush(callback) {
-		this.push('\n]');
-		callback();
-	}
+ _flush(callback) {
+  this.push('\n]');
+  callback();
+ }
 }
 
 // Process 1GB CSV file with constant memory usage
 pipeline(
-	createReadStream('users.csv'),
-	new CsvParser(),
-	new DataValidator(),
-	new JsonSerializer(),
-	createWriteStream('filtered-users.json'),
-	(error) => {
-		if (error) {
-			console.error('Processing failed:', error);
-		} else {
-			console.log('Processing complete');
-		}
-	}
+ createReadStream('users.csv'),
+ new CsvParser(),
+ new DataValidator(),
+ new JsonSerializer(),
+ createWriteStream('filtered-users.json'),
+ (error) => {
+  if (error) {
+   console.error('Processing failed:', error);
+  } else {
+   console.log('Processing complete');
+  }
+ }
 );
 ```
 
@@ -1343,4 +1343,3 @@ This covers Streams and Buffers in comprehensive detail. Would you like me to co
 2. **HTTP and Networking** (creating servers, making requests, WebSockets)
 3. **File System Operations** (advanced fs usage, file watching)
 4. **Performance and Optimization** (profiling, memory management, clustering)
-
