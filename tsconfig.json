@@ -7,10 +7,10 @@
 		"strict": true,
 		"skipLibCheck": true,
 		"outDir": "./dist",
-		"rootDir": "./src/ts",
+		"rootDir": ".",
 		"allowJs": true,
 		"sourceMap": true
 	},
-	"include": ["src/ts/**/*"],
-	"exclude": ["node_modules"]
+	"include": ["learning/**/*.ts", "dsa/**/*.ts", "misc/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
 }

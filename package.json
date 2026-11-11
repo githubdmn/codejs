@@ -4,13 +4,11 @@
 	"description": "JavaScript code snippets",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "npx nodemon",
-		"devjs": "npx nodemon --config nodemon-js.json",
-		"start": "npm run dev",
-		"prettier": "npx prettier --write src/**/*.{js,ts} && echo 'Prettier applied'",
+		"start": "node --env-file-if-exists=.env",
+		"test": "node --test",
+		"prettier": "npx prettier --write \"**/*.{js,ts}\" && echo 'Prettier applied'",
 		"build": "npx tsc",
-		"lint": "npx eslint src/"
+		"lint": "npx eslint ."
 	},
 	"repository": {
 		"type": "git",
