@@ -1,3 +1,33 @@
 {
-	"type": "module"
+	"name": "codejs",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"license": "ISC",
+	"engines": {
+		"node": ">=20"
+	},
+	"scripts": {
+		"dev": "tsx",
+		"build": "tsc -p tsconfig.json",
+		"typecheck": "tsc --noEmit -p tsconfig.json",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"lint": "eslint .",
+		"format": "prettier --write .",
+		"clean": "rm -rf dist"
+	},
+	"dependencies": {
+		"better-sqlite3": "^11.10.0"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.30.0",
+		"@types/better-sqlite3": "^7.6.13",
+		"@types/node": "^22.15.2",
+		"eslint": "^9.30.0",
+		"prettier": "^3.3.0",
+		"tsx": "^4.16.0",
+		"typescript": "^5.8.3",
+		"vitest": "^2.0.0"
+	}
 }
