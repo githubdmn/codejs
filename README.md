@@ -140,7 +140,7 @@ npm run dev -- src/web/apps/hello   # example
 
 ## Related
 
-- [docs/cheatsheets.md](docs/cheatsheets.md)
+- [docs/cheatsheets.md](.aider.docs/cheatsheets.md)
 
 ```
 
