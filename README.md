@@ -26,11 +26,9 @@ codejs/
 │   │   └── README.md
 │   ├── scripts/                 # general-purpose CLI scripts
 │   ├── web/
-│   │   ├── servers/             # raw http, express, fastify...
-│   │   └── apps/                # small web apps, ui experiments
+│   │   └── servers/             # raw http, express, fastify...
 │   ├── db/                      # postgres, sqlite, mongo, redis...
 │   ├── network/                 # tcp, udp, websockets, http clients
-│   ├── ts/                      # typescript-specific experiments
 │   ├── es6/                     # modern JS features
 │   └── es5/                     # legacy JS (var, prototypes, callbacks)
 │
@@ -40,8 +38,6 @@ codejs/
 ├── playground/                  # scratchpad (git-ignored or per-branch)
 │
 ├── examples/                    # runnable, documented examples
-│
-├── docs/                        # notes, cheatsheets, learnings
 │
 └── tests/                       # (or co-locate *.test.ts next to source)
 ```
@@ -109,15 +105,13 @@ npm run dev -- src/scripts/hello.ts   # example
 |----------------|-----------------------------------------------------------|
 | `src/dsa/`     | Data structures & algorithms with tests                   |
 | `src/scripts/` | General-purpose CLI scripts                               |
-| `src/web/`     | Web servers & small web apps                              |
+| `src/web/`     | Web servers (raw-node, express, fastify, hono)            |
 | `src/db/`      | Database experiments (Postgres, SQLite, Mongo, Redis)     |
 | `src/network/` | TCP/UDP/WebSocket/HTTP clients & servers                  |
-| `src/ts/`      | TypeScript-only experiments (generics, decorators, types) |
 | `src/es6/`     | Modern JS feature demos                                   |
 | `src/es5/`     | Legacy JS demos (var, prototypes, callbacks)              |
 | `experiments/` | Dated, throwaway experiments                              |
 | `examples/`    | Polished, runnable examples                               |
-| `docs/`        | Notes, cheatsheets, learnings                             |
 | `playground/`  | Local scratch (git-ignored)                               |
 
 ## Conventions
@@ -183,21 +177,18 @@ npm run dev -- src/scripts/hello.ts   # example
 - **ESM from day one** (`"type": "module"`, `NodeNext`) — the ecosystem is heading there; switching later is painful.
 - **Runners**: `tsx` for files, `node --watch` for servers, `vitest` for tests. Pick one and stick to it.
 - **Linter**: ESLint v9 flat config (`eslint.config.js`) — the old `.eslintrc` is deprecated.
-- **Pre-commit hook** via `husky` + `lint-staged` — small cost, keeps the repo clean.
 - **`tsc -b` + project references** if you use workspaces; makes `build`/`typecheck` fast.
-- **`c8` or Vitest's built-in coverage** — useful for DSA study.
 
 ### Repo-specific conventions
 
 - **Naming**: `kebab-case` for files/dirs, `PascalCase` for classes, `camelCase` for functions. Write it down in the
-  README or `CONTRIBUTING.md`.
+  README.
 - **One concept per directory** in `dsa/` (e.g. `dsa/structures/queue/`) with `index.ts`, `queue.ts`, `queue.test.ts`,
   `README.md`.
 - **Dated experiments**: `experiments/2025-01-09-websocket-chat/` — prevents `experiments/` from becoming a graveyard of
   `test2.ts`.
 - **Archival rule**: promote experiments to `examples/` or `src/` when they become useful; delete otherwise. Say so
   explicitly in the README.
-- **`docs/` for write-ups** — a `learnings.md` per topic; this is where the *learning* actually sticks.
 
 ### Things for specific domains
 
@@ -207,7 +198,6 @@ npm run dev -- src/scripts/hello.ts   # example
 - **`src/network/`**: note whether examples bind to `localhost` only; add a `README` with required ports.
 - **`src/es5/` and `src/es6/`**: exclude from typechecking if the point is syntax (`// @ts-nocheck` at the top, or a
   separate `tsconfig` that skips them).
-- **`src/ts/`**: keep examples *compile-only* where useful (`tsc --noEmit` showcases) alongside runtime ones.
 
 ### Risk/reality checks
 
