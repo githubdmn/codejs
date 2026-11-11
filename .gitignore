@@ -116,3 +116,6 @@ jsconfig.json
 
 # Playground scratchpad
 playground/
+
+# SQLite databases
+*.sqlite
