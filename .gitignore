@@ -6,3 +6,4 @@ coverage/
 *.sqlite
 *.db
 playground/
+src/db/sqlite/*.sqlite
