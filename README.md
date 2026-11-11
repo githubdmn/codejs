@@ -9,7 +9,7 @@ Great idea! A "monorepo playground" is a common and useful pattern. Here's how I
 ```
 codejs/
 ├── README.md
-├── package.json                 # root (workspaces, scripts)
+├── package.json                 # root (scripts, deps)
 ├── tsconfig.base.json           # shared TS config
 ├── .editorconfig
 ├── .gitignore
@@ -49,16 +49,15 @@ codejs/
 
 ---
 
-## 2. Root `package.json` (workspaces sketch)
+## 2. Root `package.json` (scripts sketch)
 
 ```json
 {
   "name": "codejs",
   "private": true,
   "type": "module",
-  "workspaces": ["src/*", "examples/*", "experiments/*"],
   "scripts": {
-    "build": "tsc -b",
+    "dev": "tsx",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -78,6 +77,8 @@ codejs/
 
 Use **`tsx`** (or `ts-node` / Node's native `--experimental-strip-types`) to *run* TS files directly without a build step — huge quality-of-life win for a playground.
 
+Add `"workspaces"` or a `"build"` script later, only when you actually need package-per-directory builds or project references.
+
 ---
 
 ## 3. `README.md` Template
@@ -95,7 +96,7 @@ nvm use            # respects .nvmrc
 npm install
 npm run typecheck
 npm test
-npm run dev -- src/web/apps/hello   # example
+npm run dev -- src/scripts/hello.ts   # example
 ```
 
 ## Layout
@@ -130,10 +131,6 @@ npm run dev -- src/web/apps/hello   # example
 - TypeScript strict mode (`tsconfig.base.json`)
 - Vitest for tests, ESLint (flat) + Prettier for style
 - `tsx` to run `.ts` directly
-
-## Related
-
-- [docs/cheatsheets.md](docs/cheatsheets.md)
 ```
 
 ---
@@ -219,7 +216,6 @@ npm run dev -- src/web/apps/hello   # example
     - `network/udp-echo/`
     - `es6/iterators/`
     - `es5/callbacks/`
-6. Add a pre-commit hook.
-7. Start using `experiments/YYYY-MM-topic/` for anything new and prune quarterly.
+6. Start using `experiments/YYYY-MM-topic/` for anything new and prune quarterly.
 
 That's a repo that's pleasant to learn in, easy to grow, and won't fight you when you add the 20th experiment.
