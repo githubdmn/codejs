@@ -119,3 +119,5 @@ playground/
 
 # SQLite databases
 *.sqlite
+*.db
+!.env.example
