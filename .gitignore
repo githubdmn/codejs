@@ -113,3 +113,6 @@ jsconfig.json
 
 
 .aider*
+
+# Playground scratchpad
+playground/
