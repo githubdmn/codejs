@@ -16,3 +16,9 @@ npm install
 npm run typecheck
 npm test
 ```
+
+## Status
+
+- Date: 2025-01-15
+- Node: 20 (see `.nvmrc`)
+- Tests: 16 passing

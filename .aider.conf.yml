@@ -1,0 +1,3 @@
+read: [README.md, CONVENTIONS.md, AIDER_RULES.md]
+auto-commits: true
+dirty-commits: false
