@@ -6,34 +6,19 @@
   "engines": {
     "node": ">=20"
   },
-  "workspaces": [
-    "src/*",
-    "examples/*",
-    "experiments/*"
-  ],
   "scripts": {
-    "dev": "tsx",
     "build": "tsc -b",
-    "typecheck": "tsc -b",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "clean": "rm -rf node_modules **/dist",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "*.{ts,js,json,md}": "prettier --write"
+    "dev": "tsx watch"
   },
   "devDependencies": {
-    "@eslint/js": "^9.0.0",
     "@types/node": "^20.14.0",
     "@vitest/coverage-v8": "^2.0.0",
     "eslint": "^9.0.0",
-    "husky": "^9.0.0",
-    "lint-staged": "^15.2.0",
     "prettier": "^3.3.0",
     "tsx": "^4.16.0",
     "typescript": "^5.5.0",
