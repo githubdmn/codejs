@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "dev": "tsx watch"
+    "dev": "tsx watch",
+    "start": "tsx src/index.ts"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
