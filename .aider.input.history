@@ -296,3 +296,9 @@
 +  run command `npx vitest src/dsa/structures/stack`.
 +
 +Then run `npx vitest run src/dsa/structures/stack` and report the result.
+
+# 2026-11-12 09:48:19.178875
++I need a central index.ts that will be connected to src/index.ts that will invoke src/dsa/index.ts that will invoke src/dsa/js-dsa-2e/index.ts. I want to start the project by npm run and dinamically to change execution scripts
+
+# 2026-11-12 09:49:12.574336
++Yes
