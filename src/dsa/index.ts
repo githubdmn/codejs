@@ -1,29 +1,29 @@
 /**
- * Data structures & algorithms dispatcher. Routes `dsa/<book>/...` targets
- * to the matching book dispatcher, and loads anything else relative to `dsa/`.
+ * Data structures & algorithms dispatcher. Routes `<book>/...` targets to the
+ * matching book dispatcher, and loads anything else relative to `dsa/`.
  *
  * Usage: npm run start -- dsa/js-dsa-2e/chapter02
  */
 import { statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { run as runBook } from './js-dsa-2e/index.js';
+import type { Runner } from '../dispatch.types.js';
+import { run as runJsDsa2e } from './js-dsa-2e/index.js';
 
-const DSA_ROOT = fileURLToPath(new URL('.', import.meta.url));
-const BOOK_PREFIX = 'js-dsa-2e/';
+const DSA_ROOT: string = fileURLToPath(new URL('.', import.meta.url));
+const DEFAULT_BOOK: string = 'js-dsa-2e';
+const BOOKS: Map<string, Runner> = new Map([['js-dsa-2e', runJsDsa2e]]);
 
-export async function run(target: string): Promise<void> {
-  if (target === '') {
-    throw new Error('usage: npm run start -- dsa/<book-or-topic>/<chapter>');
-  }
-
-  if (target.startsWith(BOOK_PREFIX)) {
-    await runBook(target.slice(BOOK_PREFIX.length));
+export async function run(target: string = ''): Promise<void> {
+  const [book = DEFAULT_BOOK, ...rest]: string[] = target.split('/').filter(Boolean);
+  const runBook: Runner | undefined = BOOKS.get(book);
+  if (runBook) {
+    await runBook(rest.join('/'));
     return;
   }
 
-  const absolute = resolve(DSA_ROOT, target);
-  const entry = statSync(absolute, { throwIfNoEntry: false })?.isDirectory()
+  const absolute: string = resolve(DSA_ROOT, target);
+  const entry: string = statSync(absolute, { throwIfNoEntry: false })?.isDirectory()
     ? join(absolute, 'index.ts')
     : absolute;
   await import(pathToFileURL(entry).href);

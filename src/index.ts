@@ -1,12 +1,15 @@
 import { statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import type { Runner } from './dispatch.types.js';
 import { run as runDsa } from './dsa/index.js';
 
-const SRC_ROOT = fileURLToPath(new URL('.', import.meta.url));
+const SRC_ROOT: string = fileURLToPath(new URL('.', import.meta.url));
+const DEFAULT_TARGET: string = 'dsa';
+const TOPICS: Map<string, Runner> = new Map([['dsa', runDsa]]);
 
 async function main(): Promise<void> {
-  const target = (process.argv[2] ?? '').replace(/\\/g, '/');
+  const target: string = (process.argv[2] ?? DEFAULT_TARGET).replace(/\\/g, '/');
 
   if (target === '') {
     console.error('usage: npm run start -- <path-under-src>');
@@ -19,17 +22,19 @@ async function main(): Promise<void> {
   process.argv.splice(2, 1);
 
   try {
-    if (target.startsWith('dsa/')) {
-      await runDsa(target.slice('dsa/'.length));
+    const [topic = '', ...rest]: string[] = target.split('/');
+    const runTopic: Runner | undefined = TOPICS.get(topic);
+    if (runTopic) {
+      await runTopic(rest.join('/'));
       return;
     }
 
-    const absolute = resolve(SRC_ROOT, target);
-    const entry = statSync(absolute, { throwIfNoEntry: false })?.isDirectory()
+    const absolute: string = resolve(SRC_ROOT, target);
+    const entry: string = statSync(absolute, { throwIfNoEntry: false })?.isDirectory()
       ? join(absolute, 'index.ts')
       : absolute;
     await import(pathToFileURL(entry).href);
-  } catch (err) {
+  } catch (err: unknown) {
     console.error(`failed to run ${target}:`, err);
     process.exitCode = 1;
   }

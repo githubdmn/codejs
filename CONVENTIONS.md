@@ -23,7 +23,9 @@ Follow these rules for **every** file you create or edit.
 - Files/dirs: `kebab-case`. Classes: `PascalCase`. Functions/vars: `camelCase`.
 - Prefer `const`. No `var` outside `src/es5/`.
 - Prefer named exports over default exports.
-- No `any` — use `unknown` and narrow.
+- Type everything explicitly: parameters, return types, exported constants, and public method signatures.
+- No `any`. Avoid `unknown`; use it only when no precise type is possible, and narrow it immediately.
+- Move shared or non-trivial types into their own file (`types.ts` or `<name>.types.ts`), re-exported through `index.ts` if public.
 - No `// @ts-ignore` — use `// @ts-expect-error` with a comment if unavoidable.
 
 ## Tests

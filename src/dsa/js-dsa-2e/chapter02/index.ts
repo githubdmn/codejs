@@ -1,4 +1,4 @@
 /**
- * Chapter 2 — Arrays. Placeholder entrypoint; add chapter code here.
+ * Chapter 2 — Arrays.
  */
-console.log('js-dsa-2e chapter02: nothing to run yet');
+export * from './chapter02-01-arrays.js';

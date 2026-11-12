@@ -8,16 +8,20 @@ import { statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const BOOK_ROOT = fileURLToPath(new URL('.', import.meta.url));
+interface RunnableModule {
+  main?: () => void;
+}
 
-export async function run(target: string): Promise<void> {
-  if (target === '') {
-    throw new Error('usage: npm run start -- dsa/js-dsa-2e/<chapter>');
-  }
+const BOOK_ROOT: string = fileURLToPath(new URL('.', import.meta.url));
+// Chapter that runs when no target is given. Change this to switch chapters.
+const CURRENT_CHAPTER: string = 'chapter02';
 
-  const absolute = resolve(BOOK_ROOT, target);
-  const entry = statSync(absolute, { throwIfNoEntry: false })?.isDirectory()
+export async function run(target: string = ''): Promise<void> {
+  const absolute: string = resolve(BOOK_ROOT, target || CURRENT_CHAPTER);
+  const entry: string = statSync(absolute, { throwIfNoEntry: false })?.isDirectory()
     ? join(absolute, 'index.ts')
     : absolute;
-  await import(pathToFileURL(entry).href);
+
+  const loaded: RunnableModule = await import(pathToFileURL(entry).href);
+  loaded.main?.();
 }

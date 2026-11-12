@@ -1,10 +1,15 @@
-
 # Chapter 2 Deep Dive: Arrays
+
+> **Progress tracker:** [js-dsa-2e-00-progress.md](./js-dsa-2e-00-progress.md)
+> **Practice file:** `src/dsa/js-dsa-2e/chapter02/chapter02-01-arrays.ts` (run with `npm start`)
+>
+> **Path note:** Use `src/dsa/js-dsa-2e/` for code and sibling `*.test.ts` files, per `CONVENTIONS.md`. The real
+> typecheck is `npx tsc -p src/tsconfig.json --noEmit`; `npm run typecheck` checks nothing.
 
 ## Part 1 — What an Array Actually Is (the mental model)
 
-Before touching code, let's nail the mental model. The book *says* "an array is the simplest memory data structure" —
-but that hides the important truth:
+Before touching code, let's nail the mental model. The book describes arrays as simple memory structures, but that
+hides the important truth.
 
 ### In C/Java: arrays are **contiguous, fixed-size memory**
 
@@ -35,15 +40,16 @@ A JS array is a special kind of object with:
 - Built-in methods from `Array.prototype`
 - **No fixed capacity** — the engine resizes it for you
 
-This is why the book says "JavaScript arrays are mutable objects... the object will grow dynamically." It's not a small
-detail — it's the reason every operation *feels* easy in JS.
+That flexibility is why every operation *feels* easy in JS. It's not a small detail; it's the reason the rest of this
+chapter is about cost.
 
 ### The hidden cost (what the book glosses over)
 
 "Grows dynamically" doesn't mean "free." Under the hood, V8 (Chrome's engine):
 
-- Starts with a **small backing store** (e.g., 4 slots).
-- When you `push` past capacity, it **reallocates** (roughly 1.5–2× the old size) and **copies** all elements.
+- Keeps a backing store that is larger than the array's `length`.
+- When you `push` past capacity, it **reallocates** a bigger store and **copies** all elements. The exact growth
+  policy is an implementation detail.
 - This amortizes to **O(1) average** per `push` — but a single `push` can occasionally be O(n).
 
 That "amortized O(1)" phrase is worth remembering — it comes up again in hash tables (Chapter 7).
@@ -192,7 +198,12 @@ hard).
 
 - Returns **new array**, same length.
 - Never use `map` for side effects — that's `forEach`.
-- `map` never skips holes? **Wrong** — `map` DOES skip holes (sparse array trap again).
+- `map` **skips holes**: the callback never runs for empty slots, and the holes stay in the result. This is the sparse
+  array trap again.
+
+```javascript
+[1, , 3].map(x => x * 2);      // [2, <1 empty item>, 6]
+```
 
 ### `filter` — keep matching
 
@@ -214,10 +225,10 @@ Signature: `reduce(callback(accumulator, current, index, array), initialValue)`
 **The `initialValue` trap**:
 
 ```javascript
-[].reduce((a, b) => a + b);           // ❌ TypeError — reduce of empty array
-[].reduce((a, b) => a + b, 0);        // ✅ 0
-[{ x: 1 }, { x: 2 }].reduce((a, b) => a.x + b.x); // ❌ 1 + undefined... → NaN
-[{ x: 1 }, { x: 2 }].reduce((a, b) => a + b.x, 0); // ✅ 3
+[].reduce((a, b) => a + b);                          // ❌ TypeError — reduce of empty array
+[].reduce((a, b) => a + b, 0);                       // ✅ 0
+[{ x: 1 }, { x: 2 }].reduce((a, b) => a + b.x);      // ❌ "[object Object]2" — no initial value, so a starts as {x: 1}
+[{ x: 1 }, { x: 2 }].reduce((a, b) => a + b.x, 0);   // ✅ 3
 ```
 
 **Always pass an initial value** unless you're *absolutely* sure the array is non-empty and you understand the types.
@@ -303,7 +314,7 @@ for (const x of arr) console.log(x);
 
 - Cleaner than `for (let i = 0; i < arr.length; i++)`.
 - **Works with any iterable** (arrays, strings, Sets, Maps, generators).
-- **Cannot** break early? Wrong — `for...of` *can* `break`/`continue`. It's `forEach` that can't.
+- Can `break` and `continue`, unlike `forEach`.
 
 ### `Array.from(arrayLike, mapFn?)`
 
@@ -389,9 +400,9 @@ you'll want to support iteration the same way — you'll hand out an object with
 
 ---
 
-## Part 8 — Typed Arrays (the book's weakest section)
+## Part 8 — Typed Arrays
 
-The book barely scratches this. Here's the actual value.
+Typed arrays are a special case worth knowing, even though this chapter's exercises use normal arrays.
 
 ### What they are
 
@@ -418,22 +429,19 @@ i32[1] = -7;
 | `Float32Array`      | 4     | IEEE 754 single               |
 | `Float64Array`      | 8     | IEEE 754 double               |
 
-### When to actually use them
+### When to use them
 
-1. **WebGL / graphics** — pixel data, vertices.
-2. **Binary file parsing** — PNG, WAV, protocols.
-3. **Performance-critical numeric loops** — V8 optimizes these far better than normal arrays (no boxing).
-4. **Interop with C/WebAssembly** — `ArrayBuffer` is the shared memory model.
+1. **Binary data** — image pixels, audio samples, file or network protocols.
+2. **Interop with WebAssembly** — `ArrayBuffer` is the shared memory model.
+3. **Large numeric data** — typed storage can be faster than generic arrays. Measure before relying on it.
 
-### When NOT to use them
+### When not to use them
 
 - Generic business logic.
 - Anything with mixed types.
-- You lose `map`/`filter` returning typed arrays without effort (they return typed arrays, which surprises people).
 
-**DSA relevance**: Typed arrays are *fixed-size* by definition — the exact opposite of JS's dynamic arrays. In Chapter
-10 (heap sort), you'll build a **fixed-size heap array**; that's the *conceptual* model TypedArrays give you — even if
-you use normal arrays.
+**DSA relevance**: typed arrays are *fixed-size*, the opposite of JS's dynamic arrays. A fixed-size heap (a likely topic
+in Chapter 10) matches that model, even if you implement it with normal arrays.
 
 ---
 
@@ -467,7 +475,7 @@ for (let i = 0; i < m.length; i++) {        // rows
 }
 ```
 
-### The graph-of-matrix pattern (foreshadowing Ch9)
+### Adjacency matrix (preview of Chapter 9)
 
 ```javascript
 // Adjacency matrix — 5 nodes, 0 = no edge, 1 = edge
@@ -480,7 +488,7 @@ const adj = [
 ];
 ```
 
-That's Dijkstra's input format in Chapter 9. Keep it in mind.
+Adjacency matrices are a standard graph representation. Chapter 9 covers graphs.
 
 ### The jagged array
 
@@ -568,38 +576,10 @@ That last one shows reduce is a general **fold** — it can build arrays, object
 
 ---
 
-## Part 11 — What the book gets right and what it underplays
+## Part 11 — Chapter 2 exercises
 
-### Gets right
-
-- Complexity tradeoffs of push/pop vs unshift/shift ✅
-- `splice` for arbitrary mutation ✅
-- Iterator methods (`map`/`filter`/`reduce`) as the foundation of functional JS ✅
-- Typed arrays as a *special* case ✅
-
-### Underplays (we fixed above)
-
-- **`new Array(n)` trap** — big one
-- **Sparse arrays** — never mentioned, but bites everyone
-- **`Array.from` with mapper** — the correct way to build dense matrices
-- **`a - b` comparator is not safe for strings** — needs `localeCompare`
-- **Amortized cost** of `push` — "grows dynamically" is glossed over
-- **`Array.prototype.sort` stability** — matters for objects
-- **`fill(new Array(...))` matrix bug** — the #1 gotcha in 2D
-- **`reduce` without initial value** — catastrophic bug source
-
-### Deliberately skipped (fine for a beginner book, but note)
-
-- **Iteration protocol** deep dive (aider will help you here)
-- **`Array.prototype.flat` / `flatMap`** — ES2019, useful but not DSA-core
-- **`Array.prototype.at(-1)`** — ES2022, `arr.at(-1)` beats `arr[arr.length - 1]`
-- **`Object.freeze`** for immutability patterns
-
----
-
-## Part 12 — Chapter 2 exercises to give aider
-
-Here are exercises I'd actually give you. Each one exercises a chapter-2 concept *and* previews a later chapter.
+Each exercise exercises a chapter-2 concept and previews a later chapter. Practice them in the file listed in the
+[progress tracker](./js-dsa-2e-00-progress.md).
 
 1. **Reverse in place** (two pointers) — O(n) time, O(1) space. Test with empty, single, even/odd lengths.
 2. **Rotate array by k** — implement three ways: (a) three reverses, (b) `splice` + `unshift`, (c) cyclic replacements.
@@ -616,134 +596,24 @@ Here are exercises I'd actually give you. Each one exercises a chapter-2 concept
 10. **Sparse array investigation** — write a script that proves `[1,,3].map(x=>x*2)` skips the hole, and fix it with
     `Array.from`.
 
+### Not covered here
+
+- `Array.prototype.flat` / `flatMap` (ES2019) — useful, not core to DSA.
+- `Array.prototype.at(-1)` (ES2022) — `arr.at(-1)` reads better than `arr[arr.length - 1]`.
+- `Object.freeze` for immutability patterns.
+
 ---
 
-## Now, prompts for aider
+## How to work through this chapter
 
-Given the `books/<slug>/ROADMAP.md` structure we agreed on, here's a **sequence of prompts** for Chapter 2. Paste them
-one at a time.
-
-### Prompt 0 — setup (one-time)
-
-```text
-/read CONVENTIONS.md
-/read ROADMAP.md
-/read books/js-dsa-2e/ROADMAP.md
-
-We are working on Chapter 2: Arrays of "Learning JavaScript Data Structures and Algorithms, 2e" (Loiane Groner).
-
-Please confirm the following before we start:
-1. Book code lives in src/dsa/chapter-02/, tests in tests/dsa/chapter-02/.
-2. Language is TypeScript, strict mode.
-3. Do NOT implement exercises for me unless I ask. If I ask "how would I approach X", give me pseudocode or a skeleton, not the full solution.
-4. After every code change, run `npm run typecheck` and `npm test`.
-
-Just confirm and wait. Do not create files yet.
-```
-
-### Prompt 1 — scaffolding + first exercise
-
-```text
-Create src/dsa/chapter-02/exercises.ts with the following exported function skeletons (bodies = throw new Error('Not implemented')):
-
-- reverseInPlace<T>(arr: T[]): T[]
-- rotateRight<T>(arr: T[], k: number): T[]
-- dedupeSorted(arr: number[]): number
-- transpose(matrix: number[][]): number[][]
-- mergeSorted(a: number[], b: number[]): number[]
-- groupBy<T, K extends PropertyKey>(arr: T[], keyFn: (x: T) => K): Record<K, T[]>
-- createPrefixSum(arr: number[]): { rangeSum(i: number, j: number): number }
-- binarySearch(arr: number[], target: number): number
-
-Also create tests/dsa/chapter-02/exercises.test.ts with:
-- A basic happy-path test for each function.
-- At least one edge case per function (empty array, single element, out of range, etc.).
-
-Do NOT implement the functions yet. Just the skeletons and tests. Then run `npm test` and show me the output — it should fail with "Not implemented", which is expected.
-```
-
-### Prompt 2 — first exercise, guided
-
-```text
-Now let's implement `reverseInPlace` and `rotateRight` in src/dsa/chapter-02/exercises.ts.
-
-Rules:
-1. Before writing code, give me a 2–3 sentence plan for each, including the time/space complexity.
-2. Then write the implementations.
-3. Then run `npm test` — do not stop until both pass.
-4. If a test fails, explain WHY it failed before fixing it.
-```
-
-### Prompt 3 — the matrix lesson
-
-```text
-Before we implement `transpose`, I want to make sure I understand the sparse-matrix trap.
-
-In src/dsa/chapter-02/matrix-demo.ts, create two exported functions:
-- buggyMatrix(rows: number, cols: number): number[][]  — using new Array(rows).fill(new Array(cols).fill(0))
-- correctMatrix(rows: number, cols: number): number[][] — using Array.from
-
-Also create tests/dsa/chapter-02/matrix-demo.test.ts with a test that:
-- Mutates buggyMatrix(3,3)[0][0] = 99 and asserts that buggyMatrix(3,3)[1][0] === 99 (proving the bug).
-- Mutates correctMatrix(3,3)[0][0] = 99 and asserts that correctMatrix(3,3)[1][0] === 0 (proving it's fixed).
-
-Explain in a comment in the source file what is happening in memory.
-```
-
-### Prompt 4 — reduce + functional pipeline
-
-```text
-Implement `groupBy` and `mergeSorted` in src/dsa/chapter-02/exercises.ts.
-
-Requirements:
-1. `groupBy` must use `Array.prototype.reduce`. Signature: `groupBy<T, K extends PropertyKey>(arr: T[], keyFn: (x: T) => K): Record<K, T[]>`.
-2. `mergeSorted` must be O(n+m) and not use `sort` internally.
-3. For each, first tell me the plan in 2–3 sentences.
-4. Then write the code.
-5. Run `npm test` and iterate until green.
-
-After that, add a new test called "functional pipeline" that composes filter + map + reduce to compute the sum of squares of even numbers in [1..10].
-```
-
-### Prompt 5 — prefix sums + binary search
-
-```text
-Implement `createPrefixSum` and `binarySearch` in src/dsa/chapter-02/exercises.ts.
-
-Requirements:
-1. `createPrefixSum` returns an object with a `rangeSum(i, j)` method that answers the sum of arr[i..j] in O(1). The preprocess step is O(n).
-2. `binarySearch` returns the index of target, or -1 if not found. Assumes arr is sorted. Must be O(log n) — no fallback to `indexOf`.
-3. Edge cases: empty array, target before the first element, target after the last element, duplicate values (return ANY valid index).
-4. First give me pseudocode, then implement, then run `npm test`.
-
-Add tests for: empty arr, target not present, target at boundaries, duplicate values.
-```
-
-### Prompt 6 — the sparse-array investigation
-
-```text
-Create src/dsa/chapter-02/sparse-investigation.ts that demonstrates these three behaviors with exported functions and a comment for each:
-
-1. `mapSkipsHoles()` — show that [1,,3].map(x => x*2) leaves a hole.
-2. `forEachSkipsHoles()` — show that forEach skips the hole.
-3. `JSONStringifiesHolesAsNull()` — show that JSON.stringify([1,,3]) === '[1,null,3]'.
-
-Write tests/dsa/chapter-02/sparse-investigation.test.ts asserting the exact observed behaviors.
-Also add a `fixedDenseMap()` function that maps [1,,3] into [2, undefined, 6] using Array.from.
-
-Explain why this matters when implementing data structures with arrays.
-```
-
-### Prompt 7 — wrap up
-
-```text
-/read books/js-dsa-2e/ROADMAP.md
-
-Chapter 2 is done. Please:
-1. Run `npm run typecheck` and `npm test`.
-2. Summarize for me: which functions are in src/dsa/chapter-02/ and how many tests cover them.
-3. If all green, update books/js-dsa-2e/ROADMAP.md: mark Ch2 as [x] Completed, and move the "← current" marker to Ch3.
-```
+1. Read Parts 1–10.
+2. Implement one function at a time in `src/dsa/js-dsa-2e/chapter02/chapter02-01-arrays.ts`, in the order listed in the
+   progress tracker.
+3. Replace the matching `it.todo` in `chapter02-01-arrays.test.ts` with real tests, then run
+   `npx vitest run src/dsa/js-dsa-2e/chapter02`.
+4. Update the status in `js-dsa-2e-00-progress.md`.
+5. Run `npm start` to confirm the practice file still runs. Before finishing, run
+   `npx tsc -p src/tsconfig.json --noEmit`; expect only the `node:sqlite` errors.
 
 ---
 
@@ -753,6 +623,5 @@ The most valuable thing you'll get out of Chapter 2 isn't the methods — it's t
 n)) and the **dense-vs-sparse** distinction. Every subsequent data structure is a response to one of those two problems.
 Keep those in mind as you push through Chapters 3–9.
 
-When you're done with the prompts and everything is green, tell me and we'll do **Chapter 3: Stacks** — and this time
-the book starts asking "how do I keep O(1) on both ends?" which is the real motivation for the stack/queue/linked-list
-trio.
+When Chapter 2 is done, move on to Chapter 3: Stacks. That's where the question "how do I keep O(1) on both ends?"
+starts to matter, and it motivates the stack/queue/linked-list trio.
