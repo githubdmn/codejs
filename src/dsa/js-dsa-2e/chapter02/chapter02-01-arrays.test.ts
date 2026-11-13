@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { main } from './chapter02-01-arrays.js';
+import { main, reverseInPlace } from './chapter02-01-arrays.js';
 
 describe('main', () => {
   afterEach(() => {
@@ -14,8 +14,24 @@ describe('main', () => {
 });
 
 describe('reverseInPlace', () => {
-  it.todo('reverses the array in place and returns it');
-  it.todo('handles empty and single-element arrays');
+  it('reverses the array in place and returns it', () => {
+    const input = [1, 2, 3, 4, 5];
+    const expected = [5, 4, 3, 2, 1];
+
+    const result = reverseInPlace(input);
+
+    expect(result).toEqual(expected);
+    expect(result).toBe(input);
+    expect(input).toEqual(expected);
+  });
+
+  it('handles empty and single-element arrays', () => {
+    const empty: number[] = [];
+    expect(reverseInPlace(empty)).toEqual([]);
+
+    const single = [42];
+    expect(reverseInPlace(single)).toEqual([42]);
+  });
 });
 
 describe('rotateRight', () => {

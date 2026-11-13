@@ -9,7 +9,15 @@ export function main(): void {
 }
 
 export function reverseInPlace<T>(arr: T[]): T[] {
-  throw new Error('Not implemented');
+  let l = 0;
+  let r = arr.length - 1;
+  while (l < r) {
+    // The loop invariant keeps both indices in range, so the `!` is safe.
+    [arr[l], arr[r]] = [arr[r]!, arr[l]!];
+    l++;
+    r--;
+  }
+  return arr;
 }
 
 export function rotateRight<T>(arr: T[], k: number): T[] {

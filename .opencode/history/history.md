@@ -13,3 +13,15 @@ Running log of what was done and where things stand. Newest entries at the botto
 - Checked the old path `src/dsa/js-dsa-2e/chapter02-01-arrays.ts`: it was already deleted in that commit (it was a zero-byte file in the parent). No fix needed. An earlier claim that it was an empty file being added was wrong.
 - Open item: `.opencode/skills/ts/SKILL.md` was committed by mistake (unrelated to arrays). User has not decided whether to move it out.
 - Next step: implement exercise 1, `reverseInPlace`, and update the tracker.
+
+## 2026-11-13
+
+- Implemented exercise 1, `reverseInPlace`: two pointers, in-place swap with
+  `[arr[l], arr[r]] = [arr[r]!, arr[l]!]`. The `!` is safe because the loop
+  invariant keeps both indices in range.
+- Replaced the two `reverseInPlace` `it.todo`s with real tests, including
+  `toBe(input)` to prove the in-place identity.
+- Verified: vitest 3 passed / 16 todo; `tsc` clean except the two expected
+  `node:sqlite` errors; prettier clean.
+- Next: exercise 3, `dedupeSorted` (tail convention still undecided).
+- Open: create `.opencode/skills/watch/SKILL.md` (drafted in chat, not written).

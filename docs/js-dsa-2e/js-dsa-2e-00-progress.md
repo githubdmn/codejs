@@ -25,7 +25,7 @@ go.
 
 | #  | Exercise                          | Function(s)                                 | Status      |
 |----|-----------------------------------|---------------------------------------------|-------------|
-| 1  | Reverse in place                  | `reverseInPlace`                            | Not started |
+| 1  | Reverse in place                  | `reverseInPlace`                            | Done        |
 | 2  | Rotate array by k                 | `rotateRight`                               | Not started |
 | 3  | Deduplicate sorted array          | `dedupeSorted`                              | Not started |
 | 4  | Matrix transpose (fill-bug proof) | `buggyMatrix`, `correctMatrix`, `transpose` | Not started |
@@ -40,3 +40,5 @@ go.
 
 - 2026-11-12: Practice file and `npm start` wiring created. Test file added with a `main()` check and `todo`
   placeholders. No exercises implemented yet.
+- 2026-11-13: Exercise 1 (`reverseInPlace`) implemented and tested with the two-pointer in-place swap. Vitest: 3
+  passed, 16 todo. `tsc` clean except the expected `node:sqlite` errors.
