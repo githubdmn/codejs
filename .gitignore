@@ -7,3 +7,4 @@ coverage/
 *.db
 playground/
 src/db/sqlite/*.sqlite
+*.DS_Store
